@@ -1,10 +1,10 @@
-resource "aws_iam_role" "github_actions" {
+resource "aws_iam_role" "github_actions_oidc" {
   name = var.iam_role_name
-  assume_role_policy = data.aws_iam_policy_document.github_actions_assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.github_actions_oidc_assume_role.json
   tags = var.tags
 }
 
-data "aws_iam_policy_document" "github_actions_assume_role" {
+data "aws_iam_policy_document" "github_actions_oidc_assume_role" {
   statement {
     effect = "Allow"
     actions = [
