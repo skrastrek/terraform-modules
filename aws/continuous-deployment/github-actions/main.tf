@@ -8,11 +8,11 @@ module "github_actions_oidc_iam_role" {
 
   source = "../../iam/roles/github-actions-oidc"
 
-  github_account_name = each.value.github_account_name
-  github_repository_name = each.value.github_repository_name
+  github_organization                  = each.value.github_organization
+  github_repository                    = each.value.github_repository
   github_actions_iam_oidc_provider_arn = module.github_actions_oidc_provider.arn
 
-  iam_role_name = each.value.iam_role_name
+  iam_role_name               = each.value.iam_role_name
   iam_role_policy_attachments = each.value.iam_role_policy_attachments
 
   tags = var.tags

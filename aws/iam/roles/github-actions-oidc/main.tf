@@ -1,7 +1,7 @@
 resource "aws_iam_role" "github_actions_oidc" {
-  name = var.iam_role_name
+  name               = var.iam_role_name
   assume_role_policy = data.aws_iam_policy_document.github_actions_oidc_assume_role.json
-  tags = var.tags
+  tags               = var.tags
 }
 
 data "aws_iam_policy_document" "github_actions_oidc_assume_role" {
@@ -17,17 +17,17 @@ data "aws_iam_policy_document" "github_actions_oidc_assume_role" {
       ]
     }
     condition {
-      test     = "StringEquals"
+      test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:${var.github_account_name}/${var.github_repository_name}:*"
+        "repo:${var.github_organization}/${var.github_repository}:*"
       ]
     }
   }
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_oidc" {
-  for_each = var.iam_role_policy_attachments
+  for_each   = var.iam_role_policy_attachments
   role       = aws_iam_role.github_actions_oidc.id
   policy_arn = each.value
 }

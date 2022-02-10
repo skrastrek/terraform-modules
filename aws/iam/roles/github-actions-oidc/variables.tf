@@ -1,8 +1,8 @@
-variable "github_account_name" {
+variable "github_organization" {
   type = string
 }
 
-variable "github_repository_name" {
+variable "github_repository" {
   type = string
 }
 
