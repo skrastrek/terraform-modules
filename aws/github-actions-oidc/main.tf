@@ -1,12 +1,12 @@
 module "github_actions_oidc_provider" {
-  source = "../../iam/oidc-providers/github-actions"
+  source = "../iam/oidc-providers/github-actions"
   tags   = var.tags
 }
 
 module "github_actions_oidc_iam_role" {
-  for_each = var.github_actions_oidc_iam_roles
+  for_each = var.iam_roles
 
-  source = "../../iam/roles/github-actions-oidc"
+  source = "../iam/roles/github-actions-oidc"
 
   github_organization                  = each.value.github_organization
   github_repository                    = each.value.github_repository

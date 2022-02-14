@@ -1,4 +1,4 @@
-variable "github_actions_oidc_iam_roles" {
+variable "iam_roles" {
   type = map(object({
     github_organization         = string
     github_repository           = string
