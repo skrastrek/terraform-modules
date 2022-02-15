@@ -18,11 +18,6 @@ variable "push_image_iam_policy_name" {
   type = string
 }
 
-variable "prevent_destroy" {
-  type    = bool
-  default = true
-}
-
 variable "tags" {
   type = map(string)
 }

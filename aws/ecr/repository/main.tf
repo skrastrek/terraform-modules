@@ -1,12 +1,7 @@
 resource "aws_ecr_repository" "this" {
   name                 = var.name
   image_tag_mutability = var.image_tag_mutability
-
-  lifecycle {
-    prevent_destroy = var.prevent_destroy
-  }
-
-  tags = var.tags
+  tags                 = var.tags
 }
 
 resource "aws_ecr_lifecycle_policy" "this" {
