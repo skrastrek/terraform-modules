@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "allow_pull_image_cross_account" {
 
 resource "aws_iam_policy" "push_image" {
   name        = replace("${aws_ecr_repository.this.name}-ecr-repository-push-image", "/", "-")
-  description = "Provides access to push images to ${aws_ecr_repository.this.name} container repository."
+  description = "Provides access to push images to ${aws_ecr_repository.this.name}."
   policy      = data.aws_iam_policy_document.allow_push_image.json
   tags        = var.tags
 }
