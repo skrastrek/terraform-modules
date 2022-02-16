@@ -12,10 +12,13 @@ resource "aws_acm_certificate" "this" {
 resource "aws_acm_certificate_validation" "this" {
   count                   = var.validation_enabled ? 1 : 0
   certificate_arn         = aws_acm_certificate.this.arn
-  validation_record_fqdns = [for record in aws_route53_record.validation : record.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.certificate_validation : record.fqdn]
 }
 
-resource "aws_route53_record" "validation" {
+resource "aws_route53_record" "certificate_validation" {
+
+  depends_on = [aws_acm_certificate.this]
+
   for_each = var.validation_method == "DNS" ? {
     for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
       name    = dvo.resource_record_name
