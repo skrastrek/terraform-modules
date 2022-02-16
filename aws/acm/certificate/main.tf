@@ -1,7 +1,7 @@
 resource "aws_acm_certificate" "this" {
   domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
-  validation_method         = var.validation_enabled
+  validation_method         = var.validation_method
   tags                      = var.tags
 
   lifecycle {
@@ -16,13 +16,13 @@ resource "aws_acm_certificate_validation" "this" {
 }
 
 resource "aws_route53_record" "certificate_validation" {
-  for_each = {
+  for_each = var.validation_enabled ? {
     for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
     }
-  }
+  } : {}
 
   allow_overwrite = true
   name            = each.value.name
