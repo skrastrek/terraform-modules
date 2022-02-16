@@ -3,7 +3,7 @@ variable "cluster_name" {
 }
 
 variable "container_insights_enabled" {
-  description = "Enable CloudWatch Container Insights"
+  description = "Enable CloudWatch Container Insights."
   type        = bool
   default     = false
 }

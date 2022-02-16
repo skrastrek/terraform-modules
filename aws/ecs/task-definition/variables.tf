@@ -39,7 +39,7 @@ variable "execution_role_arn" {
 }
 
 variable "port_mappings" {
-  description = "The service task's port mappings"
+  description = "The service task's port mappings."
   type = list(object({
     hostPort      = number,
     containerPort = number,
@@ -48,7 +48,7 @@ variable "port_mappings" {
 }
 
 variable "volumes" {
-  description = "Volume blocks that containers in your task may use"
+  description = "Volume blocks that containers in your task may use."
   type = list(object({
     host_path = string
     name      = string

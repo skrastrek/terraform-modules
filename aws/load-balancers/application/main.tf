@@ -65,7 +65,7 @@ resource "aws_alb_listener" "https" {
 resource "aws_security_group" "alb" {
   vpc_id      = var.vpc_id
   name        = "${var.name}-alb"
-  description = "Application Load Balancer"
+  description = "Application Load Balancer."
   tags        = var.tags
 }
 
