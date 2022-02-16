@@ -6,12 +6,12 @@ resource "aws_iam_role" "github_actions_oidc" {
 
 data "aws_iam_policy_document" "github_actions_oidc_assume_role" {
   statement {
-    effect = "Allow"
+    effect  = "Allow"
     actions = [
       "sts:AssumeRoleWithWebIdentity"
     ]
     principals {
-      type = "Federated"
+      type        = "Federated"
       identifiers = [
         var.github_actions_iam_oidc_provider_arn
       ]
@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "github_actions_oidc_assume_role" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values = [
+      values   = [
         "repo:${var.github_organization}/${var.github_repository}:*"
       ]
     }
