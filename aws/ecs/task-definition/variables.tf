@@ -34,14 +34,6 @@ variable "container_definitions" {
   type = list(object({}))
 }
 
-variable "log_group_name" {
-  type = string
-}
-
-variable "log_region_name" {
-  type = string
-}
-
 variable "volumes" {
   description = "Volume blocks that containers in your task may use."
   type = list(object({
