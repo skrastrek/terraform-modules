@@ -6,6 +6,7 @@ resource "aws_ecs_task_definition" "this" {
   requires_compatibilities = var.requires_compatibilities
   task_role_arn            = var.role_arn
   execution_role_arn       = var.execution_role_arn
+  container_definitions    = var.container_definitions
 
   dynamic "volume" {
     for_each = var.volumes
@@ -42,37 +43,6 @@ resource "aws_ecs_task_definition" "this" {
       }
     }
   }
-
-  container_definitions = <<EOF
-[{
-    "name": "${var.container_name}",
-    "image": "${var.container_image}",
-    %{if var.container_repository_credentials != null~}
-    "repositoryCredentials": {
-        "credentialsParameter": "${var.container_repository_credentials}"
-    },
-    %{~endif}
-    %{if length(var.container_secrets) > 0~}
-    "secrets": ${jsonencode(var.container_secrets)},
-    %{~endif}
-    "cpu": ${var.cpu},
-    "memory": ${var.memory},
-    "essential": true,
-    "portMappings": ${jsonencode(var.port_mappings)},
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "${var.log_group_name}",
-            "awslogs-region": "${var.log_region_name}",
-            "awslogs-stream-prefix": "container"
-        }
-    },
-    "mountPoints": ${jsonencode(var.container_mount_points)},
-    "stopTimeout": ${var.container_stop_timeout_in_seconds},
-    "command": ${jsonencode(var.container_command)},
-    "environment": ${jsonencode(var.container_environment)}
-}]
-EOF
 
   tags = var.tags
 }
