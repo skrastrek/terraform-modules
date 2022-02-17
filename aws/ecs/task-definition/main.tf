@@ -6,7 +6,7 @@ resource "aws_ecs_task_definition" "this" {
   requires_compatibilities = var.requires_compatibilities
   task_role_arn            = var.role_arn
   execution_role_arn       = var.execution_role_arn
-  container_definitions    = var.container_definitions
+  container_definitions    = jsonencode(var.container_definitions)
 
   dynamic "volume" {
     for_each = var.volumes
