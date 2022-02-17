@@ -63,7 +63,7 @@ resource "aws_alb_listener" "https" {
 }
 
 resource "aws_alb_listener_certificate" "https" {
-  for_each = var.additional_certificate_arns
+  for_each        = var.additional_certificate_arns
   listener_arn    = aws_alb_listener.https.arn
   certificate_arn = each.value
 }
