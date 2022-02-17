@@ -44,13 +44,6 @@ variable "log_region_name" {
   type = string
 }
 
-variable "secrets" {
-  type = list(object({
-    name = string
-    arn  = string
-  }))
-}
-
 variable "port_mappings" {
   type = list(object({
     host_port      = number
@@ -66,10 +59,19 @@ variable "environment_variables" {
   }))
 }
 
+variable "secrets" {
+  type = list(object({
+    name = string
+    arn  = string
+  }))
+  default = []
+}
+
 variable "mount_points" {
   type = list(object({
     source_volume  = string
     container_path = string
     read_only      = bool
   }))
+  default = []
 }
