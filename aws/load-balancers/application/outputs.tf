@@ -1,5 +1,5 @@
 output "arn" {
-  value = aws_lb.alb.arn
+  value = aws_alb.this.arn
 }
 
 output "http_listener_arn" {

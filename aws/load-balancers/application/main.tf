@@ -1,4 +1,4 @@
-resource "aws_lb" "alb" {
+resource "aws_alb" "this" {
   name = var.name
 
   load_balancer_type = "application"
@@ -20,7 +20,7 @@ resource "aws_lb" "alb" {
 }
 
 resource "aws_alb_listener" "http" {
-  load_balancer_arn = aws_lb.alb.arn
+  load_balancer_arn = aws_alb.this.arn
 
   protocol = "HTTP"
   port     = 80
@@ -42,7 +42,7 @@ resource "aws_alb_listener" "http" {
 }
 
 resource "aws_alb_listener" "https" {
-  load_balancer_arn = aws_lb.alb.arn
+  load_balancer_arn = aws_alb.this.arn
 
   protocol = "HTTPS"
   port     = 443
@@ -60,6 +60,12 @@ resource "aws_alb_listener" "https" {
   }
 
   tags = var.tags
+}
+
+resource "aws_alb_listener_certificate" "https" {
+  for_each = var.additional_certificate_arns
+  listener_arn    = aws_alb_listener.https.arn
+  certificate_arn = each.value
 }
 
 resource "aws_security_group" "alb" {

@@ -19,7 +19,12 @@ variable "outbound_cidr_blocks" {
 }
 
 variable "certificate_arn" {
+  description = "ARN of the default SSL server certificate."
   type = string
+}
+
+variable "additional_certificate_arns" {
+  type = set(string)
 }
 
 variable "internal" {
