@@ -1,17 +1,18 @@
-resource "aws_ecs_service" "service" {
-  name                               = var.name
-  cluster                            = var.ecs_cluster_arn
+resource "aws_ecs_service" "this" {
+  name                               = var.service_name
+  cluster                            = var.cluster_arn
   task_definition                    = var.task_definition_arn
-  desired_count                      = var.desired_count
+  desired_count                      = var.service_desired_count
   launch_type                        = var.launch_type
   deployment_minimum_healthy_percent = var.deployment_minimum_healthy_percent
   deployment_maximum_percent         = var.deployment_maximum_percent
   health_check_grace_period_seconds  = var.health_check_grace_period_seconds
+  propagate_tags                     = var.service_propagate_tags
 
   network_configuration {
-    subnets          = var.network_configuration.subnets
-    security_groups  = var.network_configuration.security_groups
-    assign_public_ip = var.network_configuration.assign_public_ip
+    subnets          = var.vpc_subnets
+    security_groups  = concat([aws_security_group.ecs_service.id], var.service_security_group_ids)
+    assign_public_ip = var.service_assign_public_ip
   }
 
   deployment_controller {
@@ -19,12 +20,11 @@ resource "aws_ecs_service" "service" {
   }
 
   dynamic "load_balancer" {
-    for_each = var.load_balancers
-
+    for_each = var.lb_arn == null ? [] : [1]
     content {
-      target_group_arn = load_balancer.value.target_group_arn
-      container_name   = load_balancer.value.container_name
-      container_port   = load_balancer.value.container_port
+      container_name   = var.container_name
+      container_port   = var.container_port
+      target_group_arn = aws_lb_target_group.ecs_service.arn
     }
   }
 
@@ -39,6 +39,5 @@ resource "aws_ecs_service" "service" {
     }
   }
 
-  propagate_tags = var.propagate_tags
-  tags           = var.tags
+  tags = var.tags
 }
