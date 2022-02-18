@@ -80,15 +80,6 @@ variable "launch_type" {
   default = "FARGATE"
 }
 
-variable "load_balancers" {
-  type = map(object({
-    target_group_arn = string
-    container_name   = string
-    container_port   = number
-  }))
-  default = {}
-}
-
 variable "deployment_minimum_healthy_percent" {
   type    = number
   default = 100
