@@ -21,14 +21,6 @@ variable "service_name" {
   type = string
 }
 
-variable "container_name" {
-  type = string
-}
-
-variable "container_port" {
-  type = number
-}
-
 variable "service_registries" {
   type = map(object({
     registry_arn   = string
@@ -73,6 +65,14 @@ variable "task_host_protocol_version" {
 
 variable "task_definition_arn" {
   type = string
+}
+
+variable "container_name" {
+  type = string
+}
+
+variable "container_port" {
+  type = number
 }
 
 variable "launch_type" {
