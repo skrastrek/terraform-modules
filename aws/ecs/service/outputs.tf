@@ -2,10 +2,6 @@ output "name" {
   value = aws_ecs_service.this.name
 }
 
-output "log_group_arn" {
-  value = aws_cloudwatch_log_group.ecs_service.arn
-}
-
 output "target_group_arn" {
   value = aws_lb_target_group.ecs_service.arn
 }

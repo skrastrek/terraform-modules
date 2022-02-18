@@ -97,7 +97,7 @@ variable "deployment_controller_type" {
 
 variable "health_check" {
   description = "A health block containing health check settings for the target group."
-  type = object({
+  type        = object({
     enabled             = bool
     protocol            = string
     port                = string
@@ -125,10 +125,6 @@ variable "health_check" {
 variable "health_check_grace_period_seconds" {
   type    = number
   default = null
-}
-
-variable "log_group_retention_in_days" {
-  type = number
 }
 
 variable "tags" {
