@@ -48,7 +48,7 @@ resource "aws_alb_listener" "https" {
   port     = 443
 
   ssl_policy      = var.ssl_policy
-  certificate_arn = var.certificate_arn
+  certificate_arn = var.default_certificate_arn
 
   default_action {
     type = "fixed-response"
