@@ -1,10 +1,10 @@
-resource "aws_iam_role" "this" {
+resource "aws_iam_role" "ecs_task" {
   name               = var.name
-  assume_role_policy = data.aws_iam_policy_document.this_assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
   tags               = var.tags
 }
 
-data "aws_iam_policy_document" "this_assume_role" {
+data "aws_iam_policy_document" "ecs_task_assume_role" {
   statement {
     effect = "Allow"
     actions = [
@@ -13,14 +13,14 @@ data "aws_iam_policy_document" "this_assume_role" {
     principals {
       type = "Service"
       identifiers = [
-        "ec2.amazonaws.com"
+        "ecs-tasks.amazonaws.com"
       ]
     }
   }
 }
 
-resource "aws_iam_role_policy" "this_write_logs" {
-  role   = aws_iam_role.this.id
+resource "aws_iam_role_policy" "ecs_task_write_logs" {
+  role   = aws_iam_role.ecs_task.id
   name   = "WriteLogs"
   policy = data.aws_iam_policy_document.write_logs.json
 }
