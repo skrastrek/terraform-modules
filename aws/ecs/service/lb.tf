@@ -5,7 +5,7 @@ data "aws_lb" "this" {
 
 resource "aws_lb_target_group" "this" {
   for_each = var.load_balancers
-  name     = var.service_name
+  name     = "${data.aws_lb.this[each.key].name}-${var.name}"
 
   vpc_id = var.vpc_id
 

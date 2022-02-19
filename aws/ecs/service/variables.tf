@@ -7,17 +7,19 @@ variable "vpc_subnets" {
   type        = list(string)
 }
 
-variable "load_balancers" {
-  type = map(object({
-    arn = string
-  }))
-}
-
 variable "cluster_arn" {
   type = string
 }
 
-variable "service_name" {
+variable "load_balancers" {
+  type = map(object({
+    arn            = string
+    container_name = string
+    container_port = number
+  }))
+}
+
+variable "name" {
   type = string
 }
 
@@ -31,22 +33,22 @@ variable "service_registries" {
   default = {}
 }
 
-variable "service_desired_count" {
-  type = number
-}
-
-variable "service_propagate_tags" {
+variable "propagate_tags" {
   type    = string
   default = "SERVICE"
 }
 
-variable "service_assign_public_ip" {
+variable "assign_public_ip" {
   type = bool
 }
 
-variable "service_security_group_ids" {
+variable "security_group_ids" {
   type    = list(string)
   default = []
+}
+
+variable "task_desired_count" {
+  type = number
 }
 
 variable "task_host_port" {
@@ -63,16 +65,16 @@ variable "task_host_protocol_version" {
   default = "HTTP1"
 }
 
-variable "task_definition_arn" {
-  type = string
-}
-
-variable "container_name" {
-  type = string
-}
-
-variable "container_port" {
+variable "task_cpu" {
   type = number
+}
+
+variable "task_memory" {
+  type = number
+}
+
+variable "container_definitions" {
+  type = list(object({}))
 }
 
 variable "launch_type" {
