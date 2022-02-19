@@ -8,7 +8,7 @@ data "aws_iam_policy_document" "cloudwatch_write_logs" {
   statement {
     effect    = "Allow"
     resources = var.log_group_arns
-    actions   = [
+    actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
