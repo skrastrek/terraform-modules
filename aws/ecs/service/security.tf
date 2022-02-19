@@ -1,12 +1,16 @@
-resource "aws_security_group" "ecs_service" {
+locals {
+  lb_security_groups = toset(flatten([for key, value in var.load_balancers : data.aws_lb.this[key].security_groups]))
+}
+
+resource "aws_security_group" "this" {
   vpc_id      = var.vpc_id
   name        = var.service_name
   description = "ECS service security group"
   tags        = var.tags
 }
 
-resource "aws_security_group_rule" "ecs_service_egress" {
-  security_group_id = aws_security_group.ecs_service.id
+resource "aws_security_group_rule" "this_egress" {
+  security_group_id = aws_security_group.this.id
   type              = "egress"
   protocol          = "-1"
   from_port         = 0
@@ -15,9 +19,9 @@ resource "aws_security_group_rule" "ecs_service_egress" {
   ipv6_cidr_blocks  = ["::/0"]
 }
 
-resource "aws_security_group_rule" "ecs_service_ingress_lb" {
-  for_each                 = var.lb_arn == null ? [] : data.aws_lb.this[1].security_groups
-  security_group_id        = aws_security_group.ecs_service.id
+resource "aws_security_group_rule" "this_ingress_lb" {
+  for_each                 = local.lb_security_groups
+  security_group_id        = aws_security_group.this.id
   type                     = "ingress"
   protocol                 = "-1"
   from_port                = 0

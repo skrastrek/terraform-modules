@@ -7,10 +7,10 @@ variable "vpc_subnets" {
   type        = list(string)
 }
 
-variable "lb_arn" {
-  description = "Attaches the service to a load balancer."
-  type        = string
-  default     = null
+variable "load_balancers" {
+  type = map(object({
+    arn = string
+  }))
 }
 
 variable "cluster_arn" {
@@ -97,7 +97,7 @@ variable "deployment_controller_type" {
 
 variable "health_check" {
   description = "A health block containing health check settings for the target group."
-  type        = object({
+  type = object({
     enabled             = bool
     protocol            = string
     port                = string

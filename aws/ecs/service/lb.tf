@@ -1,10 +1,11 @@
 data "aws_lb" "this" {
-  count = var.lb_arn == null ? 0 : 1
-  arn   = var.lb_arn
+  for_each = var.load_balancers
+  arn      = each.value.arn
 }
 
-resource "aws_lb_target_group" "ecs_service" {
-  name = var.service_name
+resource "aws_lb_target_group" "this" {
+  for_each = var.load_balancers
+  name     = var.service_name
 
   vpc_id = var.vpc_id
 

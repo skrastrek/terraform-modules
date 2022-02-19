@@ -11,7 +11,7 @@ resource "aws_ecs_service" "this" {
 
   network_configuration {
     subnets          = var.vpc_subnets
-    security_groups  = concat([aws_security_group.ecs_service.id], var.service_security_group_ids)
+    security_groups  = concat([aws_security_group.this.id], var.service_security_group_ids)
     assign_public_ip = var.service_assign_public_ip
   }
 
@@ -20,11 +20,11 @@ resource "aws_ecs_service" "this" {
   }
 
   dynamic "load_balancer" {
-    for_each = var.lb_arn == null ? [] : [1]
+    for_each = var.load_balancers
     content {
       container_name   = var.container_name
       container_port   = var.container_port
-      target_group_arn = aws_lb_target_group.ecs_service.arn
+      target_group_arn = aws_lb_target_group.this[load_balancer.key].arn
     }
   }
 
