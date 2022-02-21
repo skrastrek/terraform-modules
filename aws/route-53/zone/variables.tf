@@ -16,3 +16,8 @@ variable "records" {
   }))
   default = []
 }
+
+variable "dnssec_enabled" {
+  type    = bool
+  default = false
+}
