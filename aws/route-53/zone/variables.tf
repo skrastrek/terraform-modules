@@ -8,11 +8,11 @@ variable "comment" {
 }
 
 variable "records" {
-  type = map(object({
+  type = list(object({
     type    = string
     name    = string
     records = list(string)
     ttl     = number
   }))
-  default = {}
+  default = []
 }
