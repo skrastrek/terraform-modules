@@ -24,8 +24,8 @@ locals {
 
     environment = [
       for environment_variable in var.environment_variables : {
-      name  = environment_variable.name
-      value = environment_variable.value
+        name  = environment_variable.name
+        value = environment_variable.value
       }
     ]
 
@@ -34,6 +34,13 @@ locals {
         sourceVolume  = mount_point.source_volume
         containerPath = mount_point.container_path
         readOnly      = mount_point.read_only
+      }
+    ]
+
+    volumesFrom = [
+      for volume in var.volumes_from : {
+        sourceContainer = volume.source_container
+        readOnly        = volume.read_only
       }
     ]
 

@@ -68,10 +68,20 @@ variable "secrets" {
 }
 
 variable "mount_points" {
+  description = "The mount points for data volumes in your container."
   type = list(object({
     source_volume  = string
     container_path = string
     read_only      = bool
+  }))
+  default = []
+}
+
+variable "volumes_from" {
+  description = "Data volumes to mount from another container."
+  type = list(object({
+    source_container = string
+    read_only        = bool
   }))
   default = []
 }
