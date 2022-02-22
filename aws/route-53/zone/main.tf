@@ -6,7 +6,7 @@ resource "aws_route53_zone" "this" {
 resource "aws_route53_record" "this" {
 
   for_each = {
-  for record in var.records : "${record.name}_${record.type}" => record
+    for record in var.records : "${record.name}_${record.type}" => record
   }
 
   zone_id = aws_route53_zone.this.id
@@ -42,8 +42,8 @@ resource "aws_kms_key" "dnssec" {
 
 data "aws_iam_policy_document" "kms_key_dnssec" {
   statement {
-    sid     = "Allow Route 53 DNSSEC Service"
-    effect  = "Allow"
+    sid    = "Allow Route 53 DNSSEC Service"
+    effect = "Allow"
     actions = [
       "kms:DescribeKey",
       "kms:GetPublicKey",
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "kms_key_dnssec" {
     ]
 
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "dnssec-route53.amazonaws.com"
       ]
@@ -63,14 +63,14 @@ data "aws_iam_policy_document" "kms_key_dnssec" {
   }
 
   statement {
-    sid     = "Allow Route 53 DNSSEC Service to CreateGrant"
-    effect  = "Allow"
+    sid    = "Allow Route 53 DNSSEC Service to CreateGrant"
+    effect = "Allow"
     actions = [
       "kms:CreateGrant"
     ]
 
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "dnssec-route53.amazonaws.com"
       ]
@@ -88,8 +88,8 @@ data "aws_iam_policy_document" "kms_key_dnssec" {
   }
 
   statement {
-    sid     = "IAM User Permissions"
-    effect  = "Allow"
+    sid    = "IAM User Permissions"
+    effect = "Allow"
     actions = [
       "kms:*"
     ]
