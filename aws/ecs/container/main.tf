@@ -1,12 +1,16 @@
 locals {
   definition = {
     name  = var.name
+
     image = var.image
 
-    cpu    = var.cpu
-    memory = var.memory
+    cpu               = var.cpu
+    memory            = var.memory
+    memoryReservation = var.memory_reservation
 
-    essential = var.essential
+    essential   = var.essential
+    privileged  = var.privileged
+    interactive = var.interactive
 
     command     = var.command
     stopTimeout = var.stop_timeout_in_seconds
@@ -27,6 +31,14 @@ locals {
         name  = environment_variable.name
         value = environment_variable.value
       }
+    ]
+
+    ulimits = [
+    for ulimit in var.ulimits : {
+      name      = ulimit.name
+      softLimit = ulimit.soft_limit
+      hardLimit = ulimit.hard_limit
+    }
     ]
 
     mountPoints = [

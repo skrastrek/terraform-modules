@@ -7,16 +7,39 @@ variable "image" {
 }
 
 variable "cpu" {
+  description = "The number of cpu units reserved for the container. This field is optional for tasks using the Fargate launch type, and the only requirement is that the total amount of CPU reserved for all containers within a task be lower than the task-level cpu value."
   type = number
+  default = null
 }
 
 variable "memory" {
-  type = number
+  description = "The amount (in MiB) of memory to present to the container. If your container attempts to exceed the memory specified here, the container is killed."
+  type        = number
+  default     = null
+}
+
+variable "memory_reservation" {
+  description = "The soft limit (in MiB) of memory to reserve for the container. When system memory is under heavy contention, Docker attempts to keep the container memory to this soft limit. However, your container can consume more memory when it needs to, up to either the hard limit specified with the memory parameter (if applicable), or all of the available memory on the container instance, whichever comes first."
+  type        = number
+  default     = null
 }
 
 variable "essential" {
+  description = "When true, and container fails or stops for any reason, all other containers that are part of the task are stopped."
   type    = bool
   default = true
+}
+
+variable "privileged" {
+  description = "When true, the container is given elevated privileges on the host container instance (similar to the root user)."
+  type    = bool
+  default = false
+}
+
+variable "interactive" {
+  description = "When true, you can deploy containerized applications that require stdin or a tty to be allocated-."
+  type = bool
+  default = false
 }
 
 variable "repository_credential_arn" {
@@ -45,14 +68,17 @@ variable "log_region_name" {
 }
 
 variable "port_mappings" {
+  description = "Allow containers to access ports on the host container instance to send or receive traffic."
   type = list(object({
+    protocol       = string
     host_port      = number
     container_port = number
-    protocol       = string
   }))
 }
 
+
 variable "environment_variables" {
+  description = "The environment variables to pass to a container."
   type = list(object({
     name  = string
     value = string
@@ -60,9 +86,19 @@ variable "environment_variables" {
 }
 
 variable "secrets" {
+  description = "The secrets to pass to the container."
   type = list(object({
     name = string
     arn  = string
+  }))
+  default = []
+}
+
+variable "ulimits" {
+  type = list(object({
+    name       = string
+    soft_limit = number
+    hard_limit = number
   }))
   default = []
 }
