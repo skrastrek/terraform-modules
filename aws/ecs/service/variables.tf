@@ -74,7 +74,8 @@ variable "task_memory" {
 }
 
 variable "container_definitions" {
-  type = list(object({}))
+  description = "JSON array of container definitions."
+  type        = string
 }
 
 variable "launch_type" {
