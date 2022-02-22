@@ -1,6 +1,6 @@
 locals {
   definition = {
-    name  = var.name
+    name = var.name
 
     image = var.image
 
@@ -34,11 +34,11 @@ locals {
     ]
 
     ulimits = [
-    for ulimit in var.ulimits : {
-      name      = ulimit.name
-      softLimit = ulimit.soft_limit
-      hardLimit = ulimit.hard_limit
-    }
+      for ulimit in var.ulimits : {
+        name      = ulimit.name
+        softLimit = ulimit.soft_limit
+        hardLimit = ulimit.hard_limit
+      }
     ]
 
     mountPoints = [

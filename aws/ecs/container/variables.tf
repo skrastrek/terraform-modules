@@ -8,8 +8,8 @@ variable "image" {
 
 variable "cpu" {
   description = "The number of cpu units reserved for the container. This field is optional for tasks using the Fargate launch type, and the only requirement is that the total amount of CPU reserved for all containers within a task be lower than the task-level cpu value."
-  type = number
-  default = null
+  type        = number
+  default     = null
 }
 
 variable "memory" {
@@ -26,20 +26,20 @@ variable "memory_reservation" {
 
 variable "essential" {
   description = "When true, and container fails or stops for any reason, all other containers that are part of the task are stopped."
-  type    = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "privileged" {
   description = "When true, the container is given elevated privileges on the host container instance (similar to the root user)."
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "interactive" {
   description = "When true, you can deploy containerized applications that require stdin or a tty to be allocated-."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "repository_credential_arn" {
