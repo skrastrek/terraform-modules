@@ -22,8 +22,8 @@ resource "aws_ecs_service" "this" {
   dynamic "load_balancer" {
     for_each = var.load_balancers
     content {
-      container_name   = load_balancer.value.container_name
-      container_port   = load_balancer.value.container_port
+      container_name   = var.task_container_name
+      container_port   = var.task_container_port
       target_group_arn = aws_lb_target_group.this[load_balancer.key].arn
     }
   }

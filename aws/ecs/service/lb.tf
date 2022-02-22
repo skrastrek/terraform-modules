@@ -9,9 +9,9 @@ resource "aws_lb_target_group" "this" {
 
   vpc_id = var.vpc_id
 
-  port             = var.task_port
-  protocol         = var.task_protocol
-  protocol_version = var.task_protocol_version
+  port             = var.task_container_port
+  protocol         = var.task_container_protocol
+  protocol_version = var.task_container_protocol_version
 
   target_type = "ip"
 

@@ -13,9 +13,7 @@ variable "cluster_arn" {
 
 variable "load_balancers" {
   type = map(object({
-    arn            = string
-    container_name = string
-    container_port = number
+    arn = string
   }))
 }
 
@@ -69,18 +67,23 @@ variable "task_desired_count" {
   type = number
 }
 
-variable "task_port" {
+variable "task_container_name" {
+  description = ""
+  type        = string
+}
+
+variable "task_container_port" {
   description = "Port to use for routing traffic to the service task."
   type        = number
 }
 
-variable "task_protocol" {
+variable "task_container_protocol" {
   description = "Protocol to use for routing traffic to the service task."
   type        = string
   default     = "HTTP"
 }
 
-variable "task_protocol_version" {
+variable "task_container_protocol_version" {
   type    = string
   default = "HTTP1"
 }
