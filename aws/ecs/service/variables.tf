@@ -33,11 +33,6 @@ variable "service_registries" {
   default = {}
 }
 
-variable "propagate_tags" {
-  type    = string
-  default = "SERVICE"
-}
-
 variable "assign_public_ip" {
   type = bool
 }
@@ -45,32 +40,6 @@ variable "assign_public_ip" {
 variable "security_group_ids" {
   type    = list(string)
   default = []
-}
-
-variable "task_desired_count" {
-  type = number
-}
-
-variable "task_host_port" {
-  type = number
-}
-
-variable "task_host_protocol" {
-  type    = string
-  default = "HTTP"
-}
-
-variable "task_host_protocol_version" {
-  type    = string
-  default = "HTTP1"
-}
-
-variable "task_cpu" {
-  type = number
-}
-
-variable "task_memory" {
-  type = number
 }
 
 variable "container_definitions" {
@@ -83,23 +52,41 @@ variable "launch_type" {
   default = "FARGATE"
 }
 
-variable "deployment_minimum_healthy_percent" {
-  type    = number
-  default = 100
-}
-
-variable "deployment_maximum_percent" {
-  type    = number
-  default = 200
-}
-
-variable "deployment_controller_type" {
+variable "propagate_tags" {
   type    = string
-  default = "ECS"
+  default = "SERVICE"
 }
 
-variable "health_check" {
-  description = "A health block containing health check settings for the target group."
+variable "task_cpu" {
+  type = number
+}
+
+variable "task_memory" {
+  type = number
+}
+
+variable "task_desired_count" {
+  type = number
+}
+
+variable "task_port" {
+  description = "Port to use for routing traffic to the service task."
+  type        = number
+}
+
+variable "task_protocol" {
+  description = "Protocol to use for routing traffic to the service task."
+  type        = string
+  default     = "HTTP"
+}
+
+variable "task_protocol_version" {
+  type    = string
+  default = "HTTP1"
+}
+
+variable "task_health_check" {
+  description = "A health block containing health check settings for the service task."
   type = object({
     enabled             = bool
     protocol            = string
@@ -128,6 +115,21 @@ variable "health_check" {
 variable "health_check_grace_period_seconds" {
   type    = number
   default = null
+}
+
+variable "deployment_minimum_healthy_percent" {
+  type    = number
+  default = 100
+}
+
+variable "deployment_maximum_percent" {
+  type    = number
+  default = 200
+}
+
+variable "deployment_controller_type" {
+  type    = string
+  default = "ECS"
 }
 
 variable "tags" {
