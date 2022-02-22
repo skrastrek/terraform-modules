@@ -13,7 +13,7 @@ locals {
 
     repositoryCredentials = var.repository_credential_arn != null ? {
       credentialsParameter = var.repository_credential_arn
-    } : {}
+    } : null
 
     secrets = [
       for secret in var.secrets : {
