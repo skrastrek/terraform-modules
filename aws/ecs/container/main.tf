@@ -24,8 +24,8 @@ locals {
 
     environment = [
       for environment_variable in var.environment_variables : {
-        name                 = environment_variable.name
-        environment_variable = environment_variable.environment_variable
+      name  = environment_variable.name
+      value = environment_variable.value
       }
     ]
 
