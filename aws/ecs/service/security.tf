@@ -31,12 +31,12 @@ resource "aws_security_group_rule" "this_ingress_lb_container" {
 }
 
 resource "aws_security_group_rule" "this_ingress_lb_health_check" {
-  for_each                 = local.lb_security_groups
+  for_each                 = var.task_health_check.port == "traffic-port" ? [] : local.lb_security_groups
   security_group_id        = aws_security_group.this.id
   type                     = "ingress"
   protocol                 = "TCP"
-  from_port                = var.task_health_check.port
-  to_port                  = var.task_health_check.port
+  from_port                = tonumber(var.task_health_check.port)
+  to_port                  = tonumber(var.task_health_check.port)
   source_security_group_id = each.value
   description              = "Allow inbound traffic from load balancer on task health check port."
 }
@@ -53,12 +53,12 @@ resource "aws_security_group_rule" "lb_egress_service_task_container" {
 }
 
 resource "aws_security_group_rule" "lb_egress_service_task_health_check" {
-  for_each                 = local.lb_security_groups
+  for_each                 = var.task_health_check.port == "traffic-port" ? [] : local.lb_security_groups
   security_group_id        = each.value
   type                     = "egress"
   protocol                 = "TCP"
-  from_port                = var.task_health_check.port
-  to_port                  = var.task_health_check.port
+  from_port                = tonumber(var.task_health_check.port)
+  to_port                  = tonumber(var.task_health_check.port)
   source_security_group_id = aws_security_group.this.id
   description              = "Allow outbound traffic to ${aws_security_group.this.name} on task health check port."
 }
