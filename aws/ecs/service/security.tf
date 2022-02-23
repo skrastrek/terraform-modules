@@ -4,7 +4,7 @@ locals {
 
 resource "aws_security_group" "this" {
   vpc_id      = var.vpc_id
-  name        = var.name
+  name        = "${var.name}-service"
   description = "ECS service."
   tags        = var.tags
 }
