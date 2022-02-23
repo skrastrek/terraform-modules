@@ -6,11 +6,11 @@ resource "aws_iam_role_policy" "this" {
 
 data "aws_iam_policy_document" "cloudwatch_write_logs" {
   statement {
-    effect    = "Allow"
-    resources = var.log_group_arns
+    effect = "Allow"
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
+    resources = var.log_group_arns
   }
 }
