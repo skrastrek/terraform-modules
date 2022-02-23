@@ -23,7 +23,7 @@ resource "aws_security_group_rule" "this_ingress_lb_container" {
   for_each                 = local.lb_security_groups
   security_group_id        = aws_security_group.this.id
   type                     = "ingress"
-  protocol                 = "TCP"
+  protocol                 = "tcp"
   from_port                = var.task_container_port
   to_port                  = var.task_container_port
   source_security_group_id = each.value
@@ -34,7 +34,7 @@ resource "aws_security_group_rule" "this_ingress_lb_health_check" {
   for_each                 = var.task_health_check.port == "traffic-port" ? [] : local.lb_security_groups
   security_group_id        = aws_security_group.this.id
   type                     = "ingress"
-  protocol                 = "TCP"
+  protocol                 = "tcp"
   from_port                = tonumber(var.task_health_check.port)
   to_port                  = tonumber(var.task_health_check.port)
   source_security_group_id = each.value
@@ -45,7 +45,7 @@ resource "aws_security_group_rule" "lb_egress_service_task_container" {
   for_each                 = local.lb_security_groups
   security_group_id        = each.value
   type                     = "egress"
-  protocol                 = "TCP"
+  protocol                 = "tcp"
   from_port                = var.task_container_port
   to_port                  = var.task_container_port
   source_security_group_id = aws_security_group.this.id
@@ -56,7 +56,7 @@ resource "aws_security_group_rule" "lb_egress_service_task_health_check" {
   for_each                 = var.task_health_check.port == "traffic-port" ? [] : local.lb_security_groups
   security_group_id        = each.value
   type                     = "egress"
-  protocol                 = "TCP"
+  protocol                 = "tcp"
   from_port                = tonumber(var.task_health_check.port)
   to_port                  = tonumber(var.task_health_check.port)
   source_security_group_id = aws_security_group.this.id
