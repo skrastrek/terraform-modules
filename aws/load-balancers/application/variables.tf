@@ -14,10 +14,6 @@ variable "inbound_cidr_blocks" {
   type = list(string)
 }
 
-variable "outbound_cidr_blocks" {
-  type = list(string)
-}
-
 variable "default_certificate_arn" {
   type = string
 }

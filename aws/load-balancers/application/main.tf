@@ -92,12 +92,3 @@ resource "aws_security_group_rule" "alb_inbound_https" {
   to_port           = 443
   cidr_blocks       = var.inbound_cidr_blocks
 }
-
-resource "aws_security_group_rule" "alb_outbound_any" {
-  security_group_id = aws_security_group.alb.id
-  type              = "egress"
-  protocol          = "-1"
-  from_port         = 0
-  to_port           = 0
-  cidr_blocks       = var.outbound_cidr_blocks
-}
