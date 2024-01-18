@@ -25,10 +25,6 @@ variable "openapi_specification_export_file_name" {
   default = "exported-openapi.yml"
 }
 
-variable "permission_boundary_policy_arn" {
-  type = string
-}
-
 variable "endpoint_type" {
   type    = string
   default = "REGIONAL"
@@ -77,11 +73,6 @@ variable "resource_policy_deny_source_ips" {
 variable "xray_tracing_enabled" {
   type    = bool
   default = false
-}
-
-variable "splunk_log_forwarder_enabled" {
-  type    = bool
-  default = true
 }
 
 variable "stage_name" {
