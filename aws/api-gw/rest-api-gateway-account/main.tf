@@ -10,9 +10,9 @@ module "gateway_cloudwatch_role" {
 
   trusted_role_services             = ["apigateway.amazonaws.com"]
   create_role                       = true
-  role_name                         = "api-gateway-cloudwatch-logs-${data.aws_region.current.name}"
+  role_name                         = var.role_name
   role_description                  = "Enable logs from API Gateway."
-  role_permissions_boundary_arn     = var.permission_boundary_arn
+  role_permissions_boundary_arn     = var.role_permission_boundary_arn
   role_requires_mfa                 = false
   number_of_custom_role_policy_arns = 1
 
