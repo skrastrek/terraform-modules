@@ -1,5 +1,6 @@
 variable "permission_boundary_arn" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "tags" {
