@@ -1,13 +1,12 @@
-variable "github_organization" {
-  type = string
-}
-
-variable "github_repository" {
-  type = string
-}
-
 variable "github_actions_iam_oidc_provider_arn" {
   type = string
+}
+
+variable "github_repositories" {
+  type = list(object({
+    organization = string
+    repository   = string
+  }))
 }
 
 variable "iam_role_name" {
