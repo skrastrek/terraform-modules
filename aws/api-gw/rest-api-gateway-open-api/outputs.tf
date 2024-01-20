@@ -29,23 +29,3 @@ output "execution_log_group_name" {
 output "invoke_url" {
   value = aws_api_gateway_stage.this.invoke_url
 }
-
-output "custom_domain_name" {
-  value = try(aws_api_gateway_domain_name.this[0].domain_name, null)
-}
-
-output "custom_domain_name_cloudfront_zone_id" {
-  value = try(aws_api_gateway_domain_name.this[0].cloudfront_zone_id, null)
-}
-
-output "custom_domain_name_cloudfront_domain_name" {
-  value = try(aws_api_gateway_domain_name.this[0].cloudfront_domain_name, null)
-}
-
-output "custom_domain_name_regional_zone_id" {
-  value = try(aws_api_gateway_domain_name.this[0].regional_zone_id, null)
-}
-
-output "custom_domain_name_regional_domain_name" {
-  value = try(aws_api_gateway_domain_name.this[0].regional_domain_name, null)
-}
