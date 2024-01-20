@@ -183,25 +183,11 @@ data "aws_iam_policy_document" "deny_source_ips" {
   }
 }
 
-resource "aws_api_gateway_domain_name" "this" {
-  count = var.custom_domain_name != null ? 1 : 0
-
-  domain_name              = var.custom_domain_name
-  security_policy          = var.custom_domain_security_policy
-  regional_certificate_arn = var.custom_domain_certificate_arn
-
-  endpoint_configuration {
-    types = [var.custom_domain_endpoint_type]
-  }
-
-  tags = var.tags
-}
-
 resource "aws_apigatewayv2_api_mapping" "this" {
   count = var.custom_domain_name != null ? 1 : 0
 
   api_id          = aws_api_gateway_rest_api.this.id
   stage           = aws_api_gateway_stage.this.stage_name
-  domain_name     = aws_api_gateway_domain_name.this[0].domain_name
+  domain_name     = var.custom_domain_name
   api_mapping_key = var.custom_domain_base_path_mapping
 }

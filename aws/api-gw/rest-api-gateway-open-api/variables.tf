@@ -132,21 +132,6 @@ variable "custom_domain_base_path_mapping" {
   description = "Path segment that must be prepended to the path when accessing the API. If null, the API is exposed at the root of the given domain."
 }
 
-variable "custom_domain_endpoint_type" {
-  type    = string
-  default = "REGIONAL"
-}
-
-variable "custom_domain_certificate_arn" {
-  type    = string
-  default = null
-}
-
-variable "custom_domain_security_policy" {
-  type    = string
-  default = "TLS_1_2"
-}
-
 variable "auto_redeploy" {
   type    = bool
   default = true
