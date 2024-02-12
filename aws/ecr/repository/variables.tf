@@ -10,7 +10,15 @@ variable "image_tag_mutability" {
   type = string
 }
 
-variable "allow_pull_from_aws_account_ids" {
+variable "scan_on_push" {
+  type = bool
+}
+
+variable "resource_policy_pull_image_from_aws_account_ids" {
+  type = list(string)
+}
+
+variable "resource_policy_pull_image_from_aws_organization_ids" {
   type = list(string)
 }
 
