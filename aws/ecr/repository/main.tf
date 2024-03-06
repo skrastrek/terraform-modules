@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "this" {
 }
 
 data "aws_iam_policy_document" "allow_pull_image_from_aws_account" {
-  count = var.resource_policy_pull_image_from_aws_account_ids != null ? 1 : 0
+  count = var.resource_policy_pull_image_from_account_ids != null ? 1 : 0
 
   statement {
     sid     = "PullImageFromAwsAccount"
@@ -41,13 +41,13 @@ data "aws_iam_policy_document" "allow_pull_image_from_aws_account" {
     ]
     principals {
       type        = "AWS"
-      identifiers = formatlist("arn:aws:iam::%s:root", var.resource_policy_pull_image_from_aws_account_ids)
+      identifiers = formatlist("arn:aws:iam::%s:root", var.resource_policy_pull_image_from_account_ids)
     }
   }
 }
 
 data "aws_iam_policy_document" "allow_pull_image_from_organization" {
-  count = var.resource_policy_pull_image_from_aws_organization_ids != null ? 1 : 0
+  count = var.resource_policy_pull_image_from_organization_ids != null ? 1 : 0
 
   statement {
     sid     = "PullImageFromAwsOrganization"
@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "allow_pull_image_from_organization" {
     condition {
       test     = "StringLike"
       variable = "aws:PrincipalOrgID"
-      values   = var.resource_policy_pull_image_from_aws_organization_ids
+      values   = var.resource_policy_pull_image_from_organization_ids
     }
   }
 }
