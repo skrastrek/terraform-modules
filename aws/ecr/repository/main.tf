@@ -30,10 +30,10 @@ data "aws_iam_policy_document" "this" {
 }
 
 data "aws_iam_policy_document" "allow_pull_image_from_aws_account" {
-  count = var.resource_policy_pull_image_from_account_ids != null ? 1 : 0
+  count = length(var.resource_policy_pull_image_from_account_ids) != 0 ? 1 : 0
 
   statement {
-    sid     = "PullImageFromAwsAccount"
+    sid     = "PullImageFromAccount"
     effect  = "Allow"
     actions = [
       "ecr:BatchGetImage",
@@ -47,10 +47,10 @@ data "aws_iam_policy_document" "allow_pull_image_from_aws_account" {
 }
 
 data "aws_iam_policy_document" "allow_pull_image_from_organization" {
-  count = var.resource_policy_pull_image_from_organization_ids != null ? 1 : 0
+  count = length(var.resource_policy_pull_image_from_organization_ids) != 0 ? 1 : 0
 
   statement {
-    sid     = "PullImageFromAwsOrganization"
+    sid     = "PullImageFromOrganization"
     effect  = "Allow"
     actions = [
       "ecr:BatchGetImage",
