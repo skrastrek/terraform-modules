@@ -14,7 +14,7 @@ variable "iam_role_name" {
 }
 
 variable "iam_role_policy_attachments" {
-  type = set(string)
+  type = list(string)
 }
 
 variable "tags" {
