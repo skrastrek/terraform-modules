@@ -12,7 +12,7 @@ resource "aws_ecr_repository" "this" {
 resource "aws_ecr_lifecycle_policy" "this" {
   repository = aws_ecr_repository.this.id
 
-  policy = templatefile("resources/ecr-lifecycle-policy.tpl", {
+  policy = templatefile("${path.module}/resources/ecr-lifecycle-policy.tpl", {
     keep_last_images_count = var.keep_last_images_count
   })
 }
