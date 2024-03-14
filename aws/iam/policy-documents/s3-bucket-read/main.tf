@@ -6,7 +6,6 @@ data "aws_iam_policy_document" "this" {
       effect = "Allow"
 
       actions = [
-        "kms:GenerateDataKey",
         "kms:Decrypt"
       ]
       resources = [statement.value]
@@ -17,7 +16,7 @@ data "aws_iam_policy_document" "this" {
 
     actions = [
       "s3:GetObject",
-      "s3:PutObject"
+      "s3:GetObjectVersion"
     ]
     resources = ["${var.s3_bucket_arn}/*"]
   }
