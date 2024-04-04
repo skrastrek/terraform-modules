@@ -1,32 +1,21 @@
 resource "aws_iam_role" "github_actions_oidc" {
-  name               = var.iam_role_name
-  assume_role_policy = data.aws_iam_policy_document.github_actions_oidc_assume_role.json
-  tags               = var.tags
+  name               = var.name
+  description        = var.description
+  assume_role_policy = module.github_actions_oidc_iam_assume_role_policy_document.json
+
+  tags = var.tags
 }
 
-data "aws_iam_policy_document" "github_actions_oidc_assume_role" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "sts:AssumeRoleWithWebIdentity"
-    ]
-    principals {
-      type = "Federated"
-      identifiers = [
-        var.github_actions_iam_oidc_provider_arn
-      ]
-    }
-    condition {
-      test     = "StringLike"
-      variable = "token.actions.githubusercontent.com:sub"
-      values = [for entry in var.github_repositories : "repo:${entry.organization}/${entry.repository}:*"]
-    }
-  }
+module "github_actions_oidc_iam_assume_role_policy_document" {
+  source = "../../policy-documents/github-actions-oidc-assume-role"
+
+  github_actions_iam_oidc_provider_arn = var.github_actions_iam_oidc_provider_arn
+  github_repositories                  = var.github_repositories
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_oidc" {
-  count = length(var.iam_role_policy_attachments)
+  count = length(var.policy_attachments)
 
   role       = aws_iam_role.github_actions_oidc.id
-  policy_arn = var.iam_role_policy_attachments[count.index]
+  policy_arn = var.policy_attachments[count.index]
 }
