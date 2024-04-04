@@ -3,7 +3,13 @@ variable "name" {
 }
 
 variable "description" {
-  type = string
+  type    = string
+  default = null
+}
+
+variable "permission_boundary" {
+  type    = string
+  default = null
 }
 
 variable "policy_attachments" {

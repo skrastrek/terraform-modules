@@ -1,7 +1,8 @@
 resource "aws_iam_role" "github_actions_oidc" {
-  name               = var.name
-  description        = var.description
-  assume_role_policy = module.github_actions_oidc_iam_assume_role_policy_document.json
+  name                 = var.name
+  description          = var.description
+  permissions_boundary = var.permission_boundary
+  assume_role_policy   = module.github_actions_oidc_iam_assume_role_policy_document.json
 
   tags = var.tags
 }
