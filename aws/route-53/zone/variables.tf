@@ -1,4 +1,4 @@
-variable "domain_name" {
+variable "name" {
   type = string
 }
 
@@ -13,16 +13,6 @@ variable "vpc_associations" {
     vpc_region = string
   }))
   default = []
-}
-
-variable "records" {
-  type = map(object({
-    type    = string
-    name    = string
-    records = list(string)
-    ttl     = number
-  }))
-  default = {}
 }
 
 variable "dnssec_enabled" {

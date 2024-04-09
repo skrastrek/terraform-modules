@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_route53_zone" "this" {
-  name    = var.domain_name
+  name    = var.name
   comment = var.comment
 
   dynamic "vpc" {
@@ -19,16 +19,6 @@ resource "aws_route53_zone" "this" {
   }
 }
 
-resource "aws_route53_record" "this" {
-  for_each = var.records
-
-  zone_id = aws_route53_zone.this.id
-  name    = each.value.name
-  type    = each.value.type
-  records = each.value.records
-  ttl     = each.value.ttl
-}
-
 resource "aws_route53_hosted_zone_dnssec" "this" {
   count = var.dnssec_enabled ? 1 : 0
 
@@ -39,7 +29,7 @@ resource "aws_route53_hosted_zone_dnssec" "this" {
 resource "aws_route53_key_signing_key" "dnssec" {
   count = var.dnssec_enabled ? 1 : 0
 
-  name                       = var.domain_name
+  name                       = aws_route53_zone.this.name
   hosted_zone_id             = aws_route53_zone.this.zone_id
   key_management_service_arn = aws_kms_key.dnssec[0].arn
 }
