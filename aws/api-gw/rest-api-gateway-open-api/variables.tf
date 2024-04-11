@@ -10,21 +10,6 @@ variable "open_api_template_vars" {
   type = map(any)
 }
 
-variable "openapi_specification_export_enabled" {
-  type    = bool
-  default = false
-}
-
-variable "openapi_specification_export_file_path" {
-  type    = string
-  default = null
-}
-
-variable "openapi_specification_export_file_name" {
-  type    = string
-  default = "exported-openapi.yml"
-}
-
 variable "endpoint_type" {
   type    = string
   default = "REGIONAL"

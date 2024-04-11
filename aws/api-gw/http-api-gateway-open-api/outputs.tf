@@ -1,9 +1,9 @@
-output "arn" {
-  value = aws_apigatewayv2_api.this.arn
-}
-
 output "id" {
   value = aws_apigatewayv2_api.this.id
+}
+
+output "arn" {
+  value = aws_apigatewayv2_api.this.arn
 }
 
 output "name" {
@@ -12,6 +12,10 @@ output "name" {
 
 output "execution_arn" {
   value = aws_apigatewayv2_api.this.execution_arn
+}
+
+output "body" {
+  value = aws_apigatewayv2_api.this.body
 }
 
 output "stage_name" {

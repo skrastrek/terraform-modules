@@ -1,17 +1,21 @@
+output "id" {
+  value = aws_api_gateway_rest_api.this.id
+}
+
 output "arn" {
   value = aws_api_gateway_rest_api.this.arn
+}
+
+output "name" {
+  value = aws_api_gateway_rest_api.this.name
 }
 
 output "execution_arn" {
   value = aws_api_gateway_rest_api.this.execution_arn
 }
 
-output "id" {
-  value = aws_api_gateway_rest_api.this.id
-}
-
-output "name" {
-  value = aws_api_gateway_rest_api.this.name
+output "body" {
+  value = aws_api_gateway_rest_api.this.body
 }
 
 output "stage_name" {
