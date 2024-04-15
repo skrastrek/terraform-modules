@@ -33,8 +33,8 @@ data "aws_iam_policy_document" "allow_pull_image_from_aws_account" {
   count = length(var.resource_policy_pull_image_from_account_ids) != 0 ? 1 : 0
 
   statement {
-    sid     = "PullImageFromAccount"
-    effect  = "Allow"
+    sid    = "PullImageFromAccount"
+    effect = "Allow"
     actions = [
       "ecr:BatchGetImage",
       "ecr:GetDownloadUrlForLayer",
@@ -50,8 +50,8 @@ data "aws_iam_policy_document" "allow_pull_image_from_organization" {
   count = length(var.resource_policy_pull_image_from_organization_ids) != 0 ? 1 : 0
 
   statement {
-    sid     = "PullImageFromOrganization"
-    effect  = "Allow"
+    sid    = "PullImageFromOrganization"
+    effect = "Allow"
     actions = [
       "ecr:BatchGetImage",
       "ecr:GetDownloadUrlForLayer",
@@ -80,8 +80,8 @@ resource "aws_iam_policy" "push_image" {
 
 data "aws_iam_policy_document" "allow_push_image" {
   statement {
-    sid     = "GetLoginPassword"
-    effect  = "Allow"
+    sid    = "GetLoginPassword"
+    effect = "Allow"
     actions = [
       "ecr:GetAuthorizationToken"
     ]
@@ -91,8 +91,8 @@ data "aws_iam_policy_document" "allow_push_image" {
   }
 
   statement {
-    sid     = "PushImage"
-    effect  = "Allow"
+    sid    = "PushImage"
+    effect = "Allow"
     actions = [
       "ecr:BatchCheckLayerAvailability",
       "ecr:CompleteLayerUpload",
