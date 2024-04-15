@@ -17,6 +17,19 @@ resource "aws_route53_zone" "this" {
   }
 }
 
+data "aws_arn" "dnssec_kms_key_arn" {
+  count = var.dnssec_enabled ? 1 : 0
+
+  arn = var.dnssec_kms_key_arn
+
+  lifecycle {
+    postcondition {
+      condition     = self.region == "us-east-1"
+      error_message = "DNSSEC KMS key needs to be located in region us-east-1."
+    }
+  }
+}
+
 resource "aws_route53_key_signing_key" "dnssec" {
   count = var.dnssec_enabled ? 1 : 0
 
