@@ -2,7 +2,7 @@ variable "name_prefix" {
   type    = string
 }
 
-variable "acm_certificate_arn" {
+variable "acm_certificate_arn_us_east_1" {
   type = string
 }
 

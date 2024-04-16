@@ -41,7 +41,7 @@ resource "aws_cloudfront_distribution" "this" {
   aliases = [var.domain_name]
 
   viewer_certificate {
-    acm_certificate_arn      = var.acm_certificate_arn
+    acm_certificate_arn      = var.acm_certificate_arn_us_east_1
     minimum_protocol_version = "TLSv1.2_2021"
     ssl_support_method       = "sni-only"
   }
