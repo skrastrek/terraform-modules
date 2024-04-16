@@ -62,10 +62,10 @@ resource "aws_cloudfront_distribution" "this" {
     cached_methods  = ["GET", "HEAD"]
 
     dynamic "function_association" {
-      for_each = var.spa_redirect_enabled ? [aws_cloudfront_function.spa_redirect] : []
+      for_each = var.spa_redirect_enabled ? aws_cloudfront_function.spa_redirect : []
       content {
         event_type   = "viewer-request"
-        function_arn = function_association.value["arn"]
+        function_arn = function_association.value.arn
       }
     }
 
