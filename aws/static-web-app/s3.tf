@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "this" {
-  bucket = "${var.name_prefix}-${data.aws_caller_identity.current.account_id}-${data.aws_region.current.id}"
+  bucket = "${local.name_prefix}-${data.aws_caller_identity.current.account_id}-${data.aws_region.current.id}"
 
   tags = var.tags
 }

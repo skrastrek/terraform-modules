@@ -1,5 +1,5 @@
 resource "aws_iam_policy" "s3_bucket_read" {
-  name   = "${var.name_prefix}-s3-bucket-read"
+  name   = "${local.name_prefix}-s3-bucket-read"
   policy = module.s3_bucket_read.json
 }
 
@@ -10,7 +10,7 @@ module "s3_bucket_read" {
 }
 
 resource "aws_iam_policy" "s3_bucket_write" {
-  name   = "${var.name_prefix}-s3-bucket-write"
+  name   = "${local.name_prefix}-s3-bucket-write"
   policy = module.s3_bucket_write.json
 }
 

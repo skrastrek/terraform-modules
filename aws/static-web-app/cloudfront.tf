@@ -1,5 +1,5 @@
 locals {
-  s3_bucket_origin_id = "${var.name_prefix}-s3-bucket"
+  s3_bucket_origin_id = "${local.name_prefix}-s3-bucket"
 }
 
 data "aws_cloudfront_cache_policy" "caching_optimized" {
@@ -11,7 +11,7 @@ data "aws_cloudfront_cache_policy" "caching_disabled" {
 }
 
 resource "aws_cloudfront_origin_access_control" "this" {
-  name                              = "${var.name_prefix}-s3-bucket"
+  name                              = "${local.name_prefix}-s3-bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -20,14 +20,14 @@ resource "aws_cloudfront_origin_access_control" "this" {
 resource "aws_cloudfront_function" "spa_redirect" {
   count = var.spa_redirect_enabled ? 1 : 0
 
-  name    = "${var.name_prefix}-spa-redirect"
+  name    = "${local.name_prefix}-spa-redirect"
   runtime = "cloudfront-js-2.0"
   publish = true
   code    = file("${path.module}/resources/spa-redirect.js")
 }
 
 resource "aws_cloudfront_distribution" "this" {
-  comment = var.name_prefix
+  comment = local.name_prefix
 
   enabled             = true
   wait_for_deployment = true
