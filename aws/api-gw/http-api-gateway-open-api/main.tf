@@ -48,7 +48,7 @@ resource "aws_apigatewayv2_stage" "default" {
     throttling_burst_limit   = var.throttle_burst_limit
     detailed_metrics_enabled = var.detailed_metrics_enabled
     logging_level            = var.protocol_type == "WEBSOCKET" ? var.logging_level : null
-    data_trace_enabled       = var.protocol_type == "WEBSOCKET" ? var.data_trace_enabled : null
+    data_trace_enabled       = var.protocol_type == "WEBSOCKET" ? var.logging_data_trace_enabled : null
   }
 
   tags = var.tags

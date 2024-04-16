@@ -41,7 +41,7 @@ variable "logging_level" {
   default = "INFO"
 }
 
-variable "data_trace_enabled" {
+variable "logging_data_trace_enabled" {
   type        = bool
   default     = false
   description = "Supported only for WebSocket APIs"
