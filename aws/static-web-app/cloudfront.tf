@@ -61,6 +61,10 @@ resource "aws_cloudfront_distribution" "this" {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
 
+    compress = true
+
+    viewer_protocol_policy = "redirect-to-https"
+
     dynamic "function_association" {
       for_each = var.spa_redirect_enabled ? aws_cloudfront_function.spa_redirect : []
       content {
@@ -68,8 +72,6 @@ resource "aws_cloudfront_distribution" "this" {
         function_arn = function_association.value.arn
       }
     }
-
-    viewer_protocol_policy = "redirect-to-https"
   }
 
   default_cache_behavior {
