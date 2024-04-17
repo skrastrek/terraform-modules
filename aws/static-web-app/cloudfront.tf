@@ -136,8 +136,6 @@ resource "aws_cloudfront_distribution" "this" {
 
       viewer_protocol_policy = "redirect-to-https"
 
-      cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
-
       forwarded_values {
         query_string = true
 
