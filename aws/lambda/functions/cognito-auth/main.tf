@@ -3,12 +3,13 @@ data "aws_arn" "cognito_user_pool" {
 }
 
 locals {
-  node_project_directory_path = "${path.module}/resources/function"
+  node_directory_path = "${path.module}/resources/function"
 }
 
-resource "local_file" "function" {
-  filename = "${local.node_project_directory_path}/src/index.js"
-  content  = templatefile("${path.module}/resources/index-template.js", {
+resource "local_file" "index_rendered" {
+  filename = "${local.node_directory_path}/src/index.js"
+
+  content = templatefile("${path.module}/resources/index-template.js", {
     cognito_user_pool_region_id = data.aws_arn.cognito_user_pool.region
     cognito_user_pool_id        = data.aws_arn.cognito_user_pool.id
     cognito_user_pool_client_id = var.cognito_user_pool_client_id
@@ -16,15 +17,25 @@ resource "local_file" "function" {
   })
 }
 
-data "external" "npm_install" {
-  program     = jsondecode(["bash", "-c", "'npm install'"])
-  working_dir = local.node_project_directory_path
+resource "terraform_data" "npm_install" {
+  triggers_replace = {
+    index        = local_file.index_rendered.content_sha256
+    package      = sha256(file("${local.node_directory_path}/src/package.json"))
+    package_lock = sha256(file("${local.node_directory_path}/src/package-lock.json"))
+    node         = sha256(join("", fileset(local.node_directory_path, "src/**/*.js")))
+  }
+
+  provisioner "local-exec" {
+    command = "cd ${local.node_directory_path} && npm install"
+  }
 }
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = local.node_project_directory_path
+  source_dir  = terraform_data.npm_install.output
   output_path = "lambda_function.zip"
+
+  depends_on = [terraform_data.npm_install]
 }
 
 resource "aws_lambda_function" "this" {
