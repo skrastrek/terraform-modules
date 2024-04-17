@@ -141,7 +141,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       lambda_function_association {
         event_type   = "viewer-request"
-        include_body = true
+        include_body = false
         lambda_arn   = ordered_cache_behavior.value.function_arn
       }
     }
