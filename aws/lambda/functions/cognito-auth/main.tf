@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 data "aws_arn" "cognito_user_pool" {
   arn = var.cognito_user_pool_arn
 }
@@ -67,7 +69,7 @@ resource "aws_lambda_permission" "invoke_from_cloudfront" {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  name              = "/aws/lambda/${var.function_name}"
+  name              = "/aws/lambda/${data.aws_region.current.id}.${var.function_name}"
   retention_in_days = var.cloudwatch_logs_retention_in_days
   kms_key_id        = var.cloudwatch_logs_kms_key_id
 
