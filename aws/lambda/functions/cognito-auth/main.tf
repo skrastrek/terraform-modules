@@ -1,9 +1,5 @@
 data "aws_region" "current" {}
 
-data "aws_arn" "cognito_user_pool" {
-  arn = var.cognito_user_pool_arn
-}
-
 locals {
   node_directory_path = "${path.module}/resources/function"
 }
@@ -12,8 +8,8 @@ resource "local_file" "index" {
   filename = "${local.node_directory_path}/src/index.mjs"
 
   content = templatefile("${path.module}/resources/index-template.js", {
-    cognito_user_pool_region_id = data.aws_arn.cognito_user_pool.region
-    cognito_user_pool_id        = data.aws_arn.cognito_user_pool.id
+    cognito_user_pool_id        = var.cognito_user_pool_id
+    cognito_user_pool_region_id = var.cognito_user_pool_region_id
     cognito_user_pool_client_id = var.cognito_user_pool_client_id
     cognito_user_pool_domain    = var.cognito_user_pool_domain
   })

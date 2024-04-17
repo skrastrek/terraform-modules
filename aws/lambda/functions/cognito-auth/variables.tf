@@ -6,7 +6,11 @@ variable "memory_size" {
   type = number
 }
 
-variable "cognito_user_pool_arn" {
+variable "cognito_user_pool_id" {
+  type = string
+}
+
+variable "cognito_user_pool_region_id" {
   type = string
 }
 
