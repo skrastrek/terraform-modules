@@ -99,7 +99,7 @@ resource "aws_cloudfront_distribution" "this" {
       for_each = var.spa_enabled ? [aws_cloudfront_function.spa_redirect[0].arn] : []
       content {
         event_type   = "viewer-request"
-        function_arn = lambda_function_association.value
+        function_arn = function_association.value
       }
     }
   }
@@ -160,7 +160,7 @@ resource "aws_cloudfront_distribution" "this" {
       for_each = var.spa_enabled ? [aws_cloudfront_function.spa_redirect[0].arn] : []
       content {
         event_type   = "viewer-request"
-        function_arn = lambda_function_association.value
+        function_arn = function_association.value
       }
     }
   }
