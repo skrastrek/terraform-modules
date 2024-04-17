@@ -32,7 +32,7 @@ resource "terraform_data" "npm_install" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = terraform_data.npm_install.output
+  source_dir  = local.node_directory_path
   output_path = "lambda_function.zip"
 
   depends_on = [terraform_data.npm_install]
