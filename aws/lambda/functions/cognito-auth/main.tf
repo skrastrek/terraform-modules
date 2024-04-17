@@ -54,7 +54,16 @@ resource "aws_lambda_function" "this" {
 
   package_type     = "Zip"
   filename         = data.archive_file.lambda.output_path
-  source_code_hash = data.archive_file.lambda.output_base64sha512
+  source_code_hash = data.archive_file.lambda.output_base64sha256
+}
+
+resource "aws_lambda_permission" "invoke_from_cloudfront" {
+  function_name = aws_lambda_function.this.function_name
+  qualifier     = aws_lambda_function.this.version
+
+  statement_id = "AllowExecutionFromCloudFront"
+  action       = "lambda:InvokeFunction"
+  principal    = "edgelambda.amazonaws.com"
 }
 
 resource "aws_cloudwatch_log_group" "this" {
