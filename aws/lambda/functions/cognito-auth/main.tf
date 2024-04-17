@@ -22,7 +22,7 @@ resource "terraform_data" "npm_install" {
     index        = local_file.index_rendered.content_sha256
     package      = sha256(file("${local.node_directory_path}/package.json"))
     package_lock = sha256(file("${local.node_directory_path}/package-lock.json"))
-    node         = sha256(join("", fileset(local.node_directory_path, "src/**/*.js")))
+    node_modules = sha1(join("", [for f in fileset(local.node_directory_path, "src/**/*.js") : filesha1(f)]))
   }
 
   provisioner "local-exec" {
