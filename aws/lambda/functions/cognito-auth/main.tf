@@ -3,12 +3,12 @@ data "aws_arn" "cognito_user_pool" {
 }
 
 locals {
-  node_project_path = "${path.module}/resources/function"
+  node_project_directory_path = "${path.module}/resources/function"
 }
 
 resource "local_file" "function" {
-  filename = "${path.module}/resources/function/src/index.js"
-  content = templatefile("${path.module}/resources/index-template.js", {
+  filename = "${local.node_project_directory_path}/src/index.js"
+  content  = templatefile("${path.module}/resources/index-template.js", {
     cognito_user_pool_region_id = data.aws_arn.cognito_user_pool.region
     cognito_user_pool_id        = data.aws_arn.cognito_user_pool.id
     cognito_user_pool_client_id = var.cognito_user_pool_client_id
@@ -16,14 +16,14 @@ resource "local_file" "function" {
   })
 }
 
-data "external" "npm_build" {
+data "external" "npm_install" {
   program     = ["bash", "-c", "npm install"]
-  working_dir = local.node_project_path
+  working_dir = local.node_project_directory_path
 }
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = local.node_project_path
+  source_dir  = local.node_project_directory_path
   output_path = "lambda_function.zip"
 }
 
