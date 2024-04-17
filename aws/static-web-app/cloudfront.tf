@@ -170,7 +170,7 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       error_code         = custom_error_response.value
       response_code      = 200
-      response_page_path = var.default_root_object
+      response_page_path = "/"
     }
   }
 
