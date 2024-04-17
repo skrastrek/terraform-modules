@@ -17,7 +17,7 @@ resource "local_file" "index" {
   })
 }
 
-resource "terraform_data" "npm_install" {
+resource "terraform_data" "npm_ci" {
   triggers_replace = {
     index        = local_file.index.content_sha256
     package      = sha256(file("${local.node_directory_path}/package.json"))
@@ -29,7 +29,7 @@ resource "terraform_data" "npm_install" {
   }
 
   provisioner "local-exec" {
-    command = "cd ${local.node_directory_path} && npm install"
+    command = "cd ${local.node_directory_path} && npm ci"
   }
 }
 
@@ -38,7 +38,7 @@ data "archive_file" "lambda" {
   source_dir  = local.node_directory_path
   output_path = "lambda_function.zip"
 
-  depends_on = [terraform_data.npm_install]
+  depends_on = [terraform_data.npm_ci]
 }
 
 resource "aws_lambda_function" "this" {
