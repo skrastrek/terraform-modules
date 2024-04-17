@@ -172,11 +172,11 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "custom_error_response" {
-    for_each = var.spa_enabled ? [404] : []
+    for_each = var.spa_enabled ? var.spa_error_responses : []
     content {
-      error_code         = custom_error_response.value
+      error_code         = custom_error_response.value.error_code
       response_code      = 200
-      response_page_path = "/"
+      response_page_path = custom_error_response.value.page_path
     }
   }
 

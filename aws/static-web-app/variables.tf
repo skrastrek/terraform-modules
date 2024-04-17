@@ -24,6 +24,13 @@ variable "spa_enabled" {
   description = "Enable or disable SPA-specific features."
 }
 
+variable "spa_error_responses" {
+  type = list(object({
+    error_code = number
+    page_path  = string
+  }))
+}
+
 variable "api_gateway_origins" {
   type = list(object({
     origin_id   = string
