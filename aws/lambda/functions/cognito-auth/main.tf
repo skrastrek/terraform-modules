@@ -23,7 +23,7 @@ data "external" "npm_build" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = local.node_project_path
+  source_dir  = local.node_project_path
   output_path = "lambda_function.zip"
 }
 
