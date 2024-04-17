@@ -19,7 +19,7 @@ variable "default_root_object" {
   default = "index.html"
 }
 
-variable "spa_mode" {
+variable "spa_enabled" {
   type        = bool
   description = "Enable or disable SPA-specific features."
 }

@@ -19,7 +19,7 @@ resource "aws_cloudfront_origin_access_control" "this" {
 }
 
 resource "aws_cloudfront_function" "spa_redirect" {
-  count = var.spa_mode ? 1 : 0
+  count = var.spa_enabled ? 1 : 0
 
   name    = "${var.name_prefix}-spa-redirect"
   comment = ""
@@ -93,7 +93,7 @@ resource "aws_cloudfront_distribution" "this" {
     cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
 
     dynamic "lambda_function_association" {
-      for_each = var.spa_mode ? aws_cloudfront_function.spa_redirect : []
+      for_each = var.spa_enabled ? aws_cloudfront_function.spa_redirect : []
       content {
         event_type = "viewer-request"
         lambda_arn = function_association.value.arn
@@ -161,7 +161,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "custom_error_response" {
-    for_each = var.spa_mode ? [404] : []
+    for_each = var.spa_enabled ? [404] : []
     content {
       error_code         = custom_error_response.value
       response_code      = 200
