@@ -126,7 +126,7 @@ resource "aws_cloudfront_distribution" "this" {
   dynamic "ordered_cache_behavior" {
     for_each = var.auth_routes
     content {
-      path_pattern     = ordered_cache_behavior.value.path
+      path_pattern     = ordered_cache_behavior.value.path_pattern
       target_origin_id = local.auth_origin_id
 
       allowed_methods = ["GET", "HEAD"]
@@ -136,10 +136,14 @@ resource "aws_cloudfront_distribution" "this" {
 
       viewer_protocol_policy = "redirect-to-https"
 
-      cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled
+      cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
 
       forwarded_values {
         query_string = true
+
+        cookies {
+          forward = "none"
+        }
       }
 
       lambda_function_association {
