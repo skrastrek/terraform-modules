@@ -57,6 +57,12 @@ resource "aws_lambda_function" "this" {
   package_type     = "Zip"
   filename         = data.archive_file.lambda.output_path
   source_code_hash = data.archive_file.lambda.output_base64sha256
+
+  logging_config {
+    log_format            = "JSON"
+    application_log_level = "INFO"
+    system_log_level      = "DEBUG"
+  }
 }
 
 resource "aws_lambda_permission" "invoke_from_cloudfront" {
