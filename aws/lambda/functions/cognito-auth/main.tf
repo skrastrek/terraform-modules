@@ -20,8 +20,8 @@ resource "local_file" "index_rendered" {
 resource "terraform_data" "npm_install" {
   triggers_replace = {
     index        = local_file.index_rendered.content_sha256
-    package      = sha256(file("${local.node_directory_path}/src/package.json"))
-    package_lock = sha256(file("${local.node_directory_path}/src/package-lock.json"))
+    package      = sha256(file("${local.node_directory_path}/package.json"))
+    package_lock = sha256(file("${local.node_directory_path}/package-lock.json"))
     node         = sha256(join("", fileset(local.node_directory_path, "src/**/*.js")))
   }
 
