@@ -20,8 +20,7 @@ variable "default_root_object" {
 }
 
 variable "spa_redirect_enabled" {
-  type    = bool
-  default = true
+  type = bool
 }
 
 variable "api_gateway_origins" {
