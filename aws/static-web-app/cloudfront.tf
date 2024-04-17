@@ -46,17 +46,50 @@ resource "aws_cloudfront_distribution" "this" {
     ssl_support_method       = "sni-only"
   }
 
+  dynamic "origin" {
+    for_each = var.api_gateway_origins
+
+    content {
+      origin_id   = origin.value.origin_id
+      domain_name = origin.value.domain_name
+
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "https-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
+    }
+  }
+
   origin {
     origin_id                = local.s3_bucket_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.this.id
     domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
   }
 
-  ordered_cache_behavior {
-    path_pattern = "/"
+  dynamic "ordered_cache_behavior" {
+    for_each = var.ordered_cache_behaviours
+    content {
+      path_pattern     = ordered_cache_behavior.value.path_pattern
+      target_origin_id = ordered_cache_behavior.value.target_origin_id
 
+      allowed_methods = ordered_cache_behavior.value.allowed_methods
+      cached_methods  = ordered_cache_behavior.value.cached_methods
+
+      compress = ordered_cache_behavior.value.compress
+
+      viewer_protocol_policy = ordered_cache_behavior.value.viewer_protocol_policy
+
+      cache_policy_id            = ordered_cache_behavior.value.cache_policy_id
+      origin_request_policy_id   = ordered_cache_behavior.value.origin_request_policy_id
+      response_headers_policy_id = ordered_cache_behavior.value.response_headers_policy_id
+    }
+  }
+
+  ordered_cache_behavior {
+    path_pattern     = "/"
     target_origin_id = local.s3_bucket_origin_id
-    cache_policy_id  = data.aws_cloudfront_cache_policy.caching_disabled.id
 
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
@@ -64,6 +97,8 @@ resource "aws_cloudfront_distribution" "this" {
     compress = true
 
     viewer_protocol_policy = "redirect-to-https"
+
+    cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
 
     dynamic "function_association" {
       for_each = var.spa_redirect_enabled ? aws_cloudfront_function.spa_redirect : []
@@ -76,14 +111,15 @@ resource "aws_cloudfront_distribution" "this" {
 
   default_cache_behavior {
     target_origin_id = local.s3_bucket_origin_id
-    cache_policy_id  = data.aws_cloudfront_cache_policy.caching_optimized.id
+
+    viewer_protocol_policy = "redirect-to-https"
+
+    cache_policy_id = data.aws_cloudfront_cache_policy.caching_optimized.id
 
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
 
     compress = true
-
-    viewer_protocol_policy = "redirect-to-https"
   }
 
   restrictions {
