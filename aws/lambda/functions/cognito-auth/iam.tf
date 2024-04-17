@@ -9,10 +9,7 @@ module "assume_role_policy_document" {
   service_identifiers = ["lambda.amazonaws.com", "edgelambda.amazonaws.com"]
 }
 
-module "cloudwatch_write_logs_role_policy" {
-  source = "../../../iam/role-policies/cloudwatch-write-logs"
-
-  role_name = aws_iam_role.this.name
-
-  log_group_arns = [aws_cloudwatch_log_group.this.arn]
+resource "aws_iam_role_policy_attachment" "aws_lambda_basic_execution_role" {
+  role       = aws_iam_role.this.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
