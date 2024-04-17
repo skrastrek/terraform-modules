@@ -33,7 +33,7 @@ resource "aws_lambda_function" "this" {
 
   publish = true
 
-  runtime     = "node20.x"
+  runtime     = "nodejs20.x"
   memory_size = var.memory_size
 
   handler = "index.handler"
