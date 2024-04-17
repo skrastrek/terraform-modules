@@ -6,9 +6,9 @@ locals {
 }
 
 resource "local_file" "index" {
-  filename = "${local.node_project_path}/src/index.mjs"
+  filename = "${local.node_project_path}/index.mjs"
 
-  content = templatefile("${path.module}/resources/index-template.js", {
+  content = templatefile("${local.resource_path}/index-template.mjs", {
     cognito_user_pool_id        = var.cognito_user_pool_id
     cognito_user_pool_region_id = var.cognito_user_pool_region_id
     cognito_user_pool_client_id = var.cognito_user_pool_client_id
