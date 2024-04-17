@@ -17,7 +17,7 @@ resource "local_file" "function" {
 }
 
 data "external" "npm_install" {
-  program     = ["bash", "-c", "npm install"]
+  program     = jsondecode(["bash", "-c", "'npm install'"])
   working_dir = local.node_project_directory_path
 }
 
