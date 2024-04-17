@@ -187,6 +187,14 @@ resource "aws_cloudfront_distribution" "this" {
         function_arn = function_association.value
       }
     }
+
+    dynamic "lambda_function_association" {
+      for_each = var.auth_enabled ? [var.auth_function_arn] : []
+      content {
+        event_type = "viewer-request"
+        lambda_arn = lambda_function_association.value
+      }
+    }
   }
 
   dynamic "custom_error_response" {

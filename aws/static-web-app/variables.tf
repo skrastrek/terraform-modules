@@ -32,11 +32,20 @@ variable "api_gateway_origins" {
   default = []
 }
 
+variable "auth_enabled" {
+  type = bool
+}
+
+variable "auth_function_arn" {
+  type = string
+}
+
 variable "auth_routes" {
   type = list(object({
     path_pattern = string
     function_arn = string
   }))
+  default = []
 }
 
 variable "ordered_cache_behaviours" {
