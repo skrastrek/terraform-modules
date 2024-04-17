@@ -95,11 +95,11 @@ resource "aws_cloudfront_distribution" "this" {
 
     cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
 
-    dynamic "lambda_function_association" {
+    dynamic "function_association" {
       for_each = var.spa_enabled ? [aws_cloudfront_function.spa_redirect[0].arn] : []
       content {
-        event_type = "viewer-request"
-        lambda_arn = lambda_function_association.value
+        event_type   = "viewer-request"
+        function_arn = lambda_function_association.value
       }
     }
   }
@@ -156,11 +156,11 @@ resource "aws_cloudfront_distribution" "this" {
 
     compress = true
 
-    dynamic "lambda_function_association" {
+    dynamic "function_association" {
       for_each = var.spa_enabled ? [aws_cloudfront_function.spa_redirect[0].arn] : []
       content {
-        event_type = "viewer-request"
-        lambda_arn = lambda_function_association.value
+        event_type   = "viewer-request"
+        function_arn = lambda_function_association.value
       }
     }
   }
