@@ -1,4 +1,4 @@
-const {Authenticator} = require('cognito-at-edge');
+import {Authenticator} from "cognito-at-edge";
 
 const authenticator = new Authenticator({
     region: `${cognito_user_pool_region_id}`,
