@@ -1,11 +1,12 @@
 data "aws_region" "current" {}
 
 locals {
-  node_directory_path = "${path.module}/resources/function"
+  resource_path     = "${path.module}/resources"
+  node_project_path = "${local.resource_path}/nodejs"
 }
 
 resource "local_file" "index" {
-  filename = "${local.node_directory_path}/src/index.mjs"
+  filename = "${local.node_project_path}/src/index.mjs"
 
   content = templatefile("${path.module}/resources/index-template.js", {
     cognito_user_pool_id        = var.cognito_user_pool_id
@@ -18,23 +19,23 @@ resource "local_file" "index" {
 resource "terraform_data" "npm_ci" {
   triggers_replace = {
     index        = local_file.index.content_sha256
-    package      = sha256(file("${local.node_directory_path}/package.json"))
-    package_lock = sha256(file("${local.node_directory_path}/package-lock.json"))
+    package      = sha256(file("${local.node_project_path}/package.json"))
+    package_lock = sha256(file("${local.node_project_path}/package-lock.json"))
     node_modules = sha1(join("", [
-      for f in fileset("${local.node_directory_path}/node_modules", "**") :
-      filesha1("${local.node_directory_path}/node_modules/${f}")
+      for f in fileset("${local.node_project_path}/node_modules", "**") :
+      filesha1("${local.node_project_path}/node_modules/${f}")
     ]))
   }
 
   provisioner "local-exec" {
-    command = "cd ${local.node_directory_path} && npm ci"
+    command = "cd ${local.node_project_path} && npm ci"
   }
 }
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = "${local.node_directory_path}/"
-  output_path = "${path.module}/cognito-auth.zip"
+  source_dir  = "${local.node_project_path}/"
+  output_path = "${local.resource_path}/cognito-auth.zip"
 
   depends_on = [terraform_data.npm_ci]
 }
