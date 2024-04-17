@@ -22,6 +22,18 @@ variable "cognito_user_pool_domain" {
   type = string
 }
 
+variable "callback_path" {
+  type = string
+}
+
+variable "logout_path" {
+  type = string
+}
+
+variable "logout_redirect_path" {
+  type = string
+}
+
 variable "cloudwatch_logs_retention_in_days" {
   type = number
 }

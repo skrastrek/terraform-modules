@@ -13,6 +13,10 @@ resource "local_file" "index" {
     cognito_user_pool_region_id = var.cognito_user_pool_region_id
     cognito_user_pool_client_id = var.cognito_user_pool_client_id
     cognito_user_pool_domain    = var.cognito_user_pool_domain
+
+    callback_path        = var.callback_path
+    logout_path          = var.logout_path
+    logout_redirect_path = var.logout_redirect_path
   })
 }
 
