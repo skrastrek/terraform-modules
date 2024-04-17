@@ -153,10 +153,12 @@ resource "aws_cloudfront_distribution" "this" {
 
     compress = true
 
-    lambda_function_association {
-      event_type   = "viewer-request"
-      lambda_arn   = ""
-      function_arn = function_association.value.arn
+    dynamic "lambda_function_association" {
+      for_each = var.spa_enabled ? [aws_cloudfront_function.spa_redirect.arn] : []
+      content {
+        event_type = "viewer-request"
+        lambda_arn = lambda_function_association.value
+      }
     }
   }
 
