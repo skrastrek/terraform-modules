@@ -34,16 +34,6 @@ resource "aws_cloudfront_origin_access_control" "this" {
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_function" "spa_redirect" {
-  count = var.spa_enabled ? 1 : 0
-
-  name    = "${var.name_prefix}-spa-redirect"
-  comment = ""
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = file("${path.module}/resources/spa-redirect.js")
-}
-
 resource "aws_cloudfront_distribution" "this" {
   comment = var.name_prefix
 
@@ -112,14 +102,6 @@ resource "aws_cloudfront_distribution" "this" {
     cache_policy_id            = data.aws_cloudfront_cache_policy.caching_disabled.id
     origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
     response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
-
-    dynamic "function_association" {
-      for_each = var.spa_enabled ? [aws_cloudfront_function.spa_redirect[0].arn] : []
-      content {
-        event_type   = "viewer-request"
-        function_arn = function_association.value
-      }
-    }
   }
 
   dynamic "ordered_cache_behavior" {
@@ -179,14 +161,6 @@ resource "aws_cloudfront_distribution" "this" {
     cache_policy_id            = data.aws_cloudfront_cache_policy.caching_optimized.id
     origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
     response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
-
-    dynamic "function_association" {
-      for_each = var.spa_enabled ? [aws_cloudfront_function.spa_redirect[0].arn] : []
-      content {
-        event_type   = "viewer-request"
-        function_arn = function_association.value
-      }
-    }
 
     dynamic "lambda_function_association" {
       for_each = var.auth_enabled ? [var.auth_function_arn] : []
