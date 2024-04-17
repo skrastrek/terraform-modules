@@ -68,25 +68,6 @@ resource "aws_cloudfront_distribution" "this" {
     domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
   }
 
-  dynamic "ordered_cache_behavior" {
-    for_each = var.ordered_cache_behaviours
-    content {
-      path_pattern     = ordered_cache_behavior.value.path_pattern
-      target_origin_id = ordered_cache_behavior.value.target_origin_id
-
-      allowed_methods = ordered_cache_behavior.value.allowed_methods
-      cached_methods  = ordered_cache_behavior.value.cached_methods
-
-      compress = ordered_cache_behavior.value.compress
-
-      viewer_protocol_policy = ordered_cache_behavior.value.viewer_protocol_policy
-
-      cache_policy_id            = ordered_cache_behavior.value.cache_policy_id
-      origin_request_policy_id   = ordered_cache_behavior.value.origin_request_policy_id
-      response_headers_policy_id = ordered_cache_behavior.value.response_headers_policy_id
-    }
-  }
-
   ordered_cache_behavior {
     path_pattern     = "/"
     target_origin_id = local.s3_bucket_origin_id
@@ -106,6 +87,25 @@ resource "aws_cloudfront_distribution" "this" {
         event_type   = "viewer-request"
         function_arn = function_association.value.arn
       }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.ordered_cache_behaviours
+    content {
+      path_pattern     = ordered_cache_behavior.value.path_pattern
+      target_origin_id = ordered_cache_behavior.value.target_origin_id
+
+      allowed_methods = ordered_cache_behavior.value.allowed_methods
+      cached_methods  = ordered_cache_behavior.value.cached_methods
+
+      compress = ordered_cache_behavior.value.compress
+
+      viewer_protocol_policy = ordered_cache_behavior.value.viewer_protocol_policy
+
+      cache_policy_id            = ordered_cache_behavior.value.cache_policy_id
+      origin_request_policy_id   = ordered_cache_behavior.value.origin_request_policy_id
+      response_headers_policy_id = ordered_cache_behavior.value.response_headers_policy_id
     }
   }
 
