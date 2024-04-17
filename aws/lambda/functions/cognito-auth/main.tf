@@ -9,10 +9,14 @@ resource "local_file" "index" {
   filename = "${local.node_project_path}/index.mjs"
 
   content = templatefile("${local.resource_path}/index-template.mjs", {
-    cognito_user_pool_id        = var.cognito_user_pool_id
-    cognito_user_pool_region_id = var.cognito_user_pool_region_id
-    cognito_user_pool_client_id = var.cognito_user_pool_client_id
-    cognito_user_pool_domain    = var.cognito_user_pool_domain
+    cognito_user_pool_id            = var.cognito_user_pool_id
+    cognito_user_pool_region_id     = var.cognito_user_pool_region_id
+    cognito_user_pool_domain        = var.cognito_user_pool_domain
+    cognito_user_pool_client_id     = var.cognito_user_pool_client_id
+    cognito_user_pool_client_secret = var.cognito_user_pool_client_secret
+
+    cookie_domain = var.cookie_domain
+    cookie_path   = var.cookie_path
 
     callback_path        = var.callback_path
     logout_path          = var.logout_path

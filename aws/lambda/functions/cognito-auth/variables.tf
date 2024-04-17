@@ -18,6 +18,11 @@ variable "cognito_user_pool_client_id" {
   type = string
 }
 
+variable "cognito_user_pool_client_secret" {
+  type      = string
+  sensitive = true
+}
+
 variable "cognito_user_pool_domain" {
   type = string
 }
@@ -31,6 +36,14 @@ variable "logout_path" {
 }
 
 variable "logout_redirect_path" {
+  type = string
+}
+
+variable "cookie_domain" {
+  type = string
+}
+
+variable "cookie_path" {
   type = string
 }
 
