@@ -127,11 +127,16 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = var.auth_routes
     content {
       path_pattern     = ordered_cache_behavior.value.path
-      target_origin_id = "auth"
+      target_origin_id = local.auth_origin_id
+
+      allowed_methods = ["GET", "HEAD"]
+      cached_methods  = []
 
       compress = true
 
       viewer_protocol_policy = "redirect-to-https"
+
+      cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled
 
       forwarded_values {
         query_string = true
