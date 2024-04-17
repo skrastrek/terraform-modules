@@ -6,7 +6,7 @@ locals {
   node_directory_path = "${path.module}/resources/function"
 }
 
-resource "local_file" "index_rendered" {
+resource "local_file" "index" {
   filename = "${local.node_directory_path}/src/index.js"
 
   content = templatefile("${path.module}/resources/index-template.js", {
@@ -19,12 +19,12 @@ resource "local_file" "index_rendered" {
 
 resource "terraform_data" "npm_install" {
   triggers_replace = {
-    index        = local_file.index_rendered.content_sha256
+    index        = local_file.index.content_sha256
     package      = sha256(file("${local.node_directory_path}/package.json"))
     package_lock = sha256(file("${local.node_directory_path}/package-lock.json"))
     node_modules = sha1(join("", [
-      for f in fileset("${local.node_directory_path}/src", "**") :
-      filesha1("${local.node_directory_path}/src/${f}")
+      for f in fileset("${local.node_directory_path}/node_modules", "**") :
+      filesha1("${local.node_directory_path}/node_modules/${f}")
     ]))
   }
 
