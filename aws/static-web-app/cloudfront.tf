@@ -130,7 +130,7 @@ resource "aws_cloudfront_distribution" "this" {
       target_origin_id = local.auth_origin_id
 
       allowed_methods = ["GET", "HEAD"]
-      cached_methods  = []
+      cached_methods  = ["GET", "HEAD"]
 
       compress = true
 
