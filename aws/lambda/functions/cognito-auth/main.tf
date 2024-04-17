@@ -37,8 +37,8 @@ resource "terraform_data" "npm_ci" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = local.node_directory_path
-  output_path = "lambda_function.zip"
+  source_dir  = "${local.node_directory_path}/"
+  output_path = "${path.module}/cognito-auth.zip"
 
   depends_on = [terraform_data.npm_ci]
 }
