@@ -19,8 +19,9 @@ variable "default_root_object" {
   default = "index.html"
 }
 
-variable "spa_redirect_enabled" {
-  type = bool
+variable "spa_mode" {
+  type        = bool
+  description = "Enable or disable SPA-specific features."
 }
 
 variable "api_gateway_origins" {
@@ -29,6 +30,13 @@ variable "api_gateway_origins" {
     domain_name = string
   }))
   default = []
+}
+
+variable "auth_routes" {
+  type = list(object({
+    path_pattern = string
+    function_arn = string
+  }))
 }
 
 variable "ordered_cache_behaviours" {

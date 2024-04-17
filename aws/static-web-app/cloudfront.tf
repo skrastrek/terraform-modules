@@ -1,4 +1,5 @@
 locals {
+  auth_origin_id      = "auth"
   s3_bucket_origin_id = "${var.name_prefix}-s3-bucket"
 }
 
@@ -18,9 +19,10 @@ resource "aws_cloudfront_origin_access_control" "this" {
 }
 
 resource "aws_cloudfront_function" "spa_redirect" {
-  count = var.spa_redirect_enabled ? 1 : 0
+  count = var.spa_mode ? 1 : 0
 
   name    = "${var.name_prefix}-spa-redirect"
+  comment = ""
   runtime = "cloudfront-js-2.0"
   publish = true
   code    = file("${path.module}/resources/spa-redirect.js")
@@ -68,6 +70,15 @@ resource "aws_cloudfront_distribution" "this" {
     domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
   }
 
+  origin {
+    origin_id   = local.auth_origin_id
+    domain_name = "will-never-be-reached.org"
+
+    custom_origin_config {
+      origin_protocol_policy = "match-viewer"
+    }
+  }
+
   ordered_cache_behavior {
     path_pattern     = "/"
     target_origin_id = local.s3_bucket_origin_id
@@ -81,11 +92,11 @@ resource "aws_cloudfront_distribution" "this" {
 
     cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
 
-    dynamic "function_association" {
-      for_each = var.spa_redirect_enabled ? aws_cloudfront_function.spa_redirect : []
+    dynamic "lambda_function_association" {
+      for_each = var.spa_mode ? aws_cloudfront_function.spa_redirect : []
       content {
-        event_type   = "viewer-request"
-        function_arn = function_association.value.arn
+        event_type = "viewer-request"
+        lambda_arn = function_association.value.arn
       }
     }
   }
@@ -109,6 +120,27 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
+  dynamic "ordered_cache_behavior" {
+    for_each = var.auth_routes
+    content {
+      path_pattern     = ordered_cache_behavior.value.path
+      target_origin_id = "auth"
+
+      compress = true
+
+      viewer_protocol_policy = "redirect-to-https"
+
+      forwarded_values {
+        query_string = true
+      }
+
+      lambda_function_association {
+        event_type = "viewer-request"
+        lambda_arn = ordered_cache_behavior.value.function_arn
+      }
+    }
+  }
+
   default_cache_behavior {
     target_origin_id = local.s3_bucket_origin_id
 
@@ -120,6 +152,21 @@ resource "aws_cloudfront_distribution" "this" {
     cached_methods  = ["GET", "HEAD"]
 
     compress = true
+
+    lambda_function_association {
+      event_type   = "viewer-request"
+      lambda_arn   = ""
+      function_arn = function_association.value.arn
+    }
+  }
+
+  dynamic "custom_error_response" {
+    for_each = var.spa_mode ? [404] : []
+    content {
+      error_code         = custom_error_response.value
+      response_code      = 200
+      response_page_path = var.default_root_object
+    }
   }
 
   restrictions {
