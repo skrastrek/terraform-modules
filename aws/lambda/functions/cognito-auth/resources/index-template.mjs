@@ -7,4 +7,4 @@ const authenticator = new Authenticator({
     userPoolDomain: `${cognito_user_pool_domain}`,
 });
 
-exports.handler = async (request) => authenticator.handle(request);
+export const handler = async (event, context) => authenticator.handler(event);
