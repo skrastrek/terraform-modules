@@ -1,0 +1,11 @@
+{
+  "name": "cognito-auth",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "cognito-at-edge": "^1.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7"
+  }
+}
