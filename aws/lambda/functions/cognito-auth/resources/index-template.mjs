@@ -9,6 +9,8 @@ const authenticator = new Authenticator({
     parseAuthPath: `${callback_path}`,
     cookieDomain: `${cookie_domain}`,
     cookiePath: `${cookie_path}`,
+    sameSite: `${cookie_same_site}`,
+    httpOnly: `${cookie_http_only}`,
     logoutConfiguration: {
         logoutUri: `${logout_path}`,
         logoutRedirectUri: `${logout_redirect_path}`

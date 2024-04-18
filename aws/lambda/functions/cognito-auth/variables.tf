@@ -47,6 +47,19 @@ variable "cookie_path" {
   type = string
 }
 
+variable "cookie_same_site" {
+  type = string
+
+  validation {
+    condition     = var.cookie_same_site == "Strict" || var.cookie_same_site == "Lax" || var.cookie_same_site == "None"
+    error_message = "cookie_same_site value must be either 'Strict', 'Lax' or 'None'"
+  }
+}
+
+variable "cookie_http_only" {
+  type = bool
+}
+
 variable "cloudwatch_logs_retention_in_days" {
   type = number
 }

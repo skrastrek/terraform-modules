@@ -15,8 +15,10 @@ resource "local_file" "index" {
     cognito_user_pool_client_id     = var.cognito_user_pool_client_id
     cognito_user_pool_client_secret = var.cognito_user_pool_client_secret
 
-    cookie_domain = var.cookie_domain
-    cookie_path   = var.cookie_path
+    cookie_domain    = var.cookie_domain
+    cookie_path      = var.cookie_path
+    cookie_http_only = var.cookie_http_only
+    cookie_same_site = var.cookie_same_site
 
     callback_path        = var.callback_path
     logout_path          = var.logout_path
