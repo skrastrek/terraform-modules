@@ -68,22 +68,6 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  ordered_cache_behavior {
-    path_pattern     = "/"
-    target_origin_id = local.s3_bucket_origin_id
-
-    allowed_methods = ["GET", "HEAD"]
-    cached_methods  = ["GET", "HEAD"]
-
-    compress = true
-
-    viewer_protocol_policy = "redirect-to-https"
-
-    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_disabled.id
-    origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
-    response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
-  }
-
   dynamic "ordered_cache_behavior" {
     for_each = var.auth_ordered_cache_behaviours
     content {
