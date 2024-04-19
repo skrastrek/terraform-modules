@@ -48,8 +48,7 @@ variable "auth_ordered_cache_behaviours" {
 
 variable "s3_bucket_ordered_cache_behaviours" {
   type = list(object({
-    target_origin_id = string
-    path_pattern     = string
+    path_pattern = string
 
     allowed_methods = list(string)
     cached_methods  = list(string)
