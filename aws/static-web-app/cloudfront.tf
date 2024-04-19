@@ -56,15 +56,18 @@ resource "aws_cloudfront_distribution" "this" {
     domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
   }
 
-  origin {
-    origin_id   = local.auth_origin_id
-    domain_name = "will-never-be-reached.org"
+  dynamic "origin" {
+    for_each = var.auth_enabled ? [local.auth_origin_id] : []
+    content {
+      origin_id   = local.auth_origin_id
+      domain_name = "will-never-be-reached.org"
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_ssl_protocols   = ["TLSv1.2"]
-      origin_protocol_policy = "match-viewer"
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_ssl_protocols   = ["TLSv1.2"]
+        origin_protocol_policy = "match-viewer"
+      }
     }
   }
 
