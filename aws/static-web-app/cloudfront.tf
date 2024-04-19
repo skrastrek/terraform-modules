@@ -122,7 +122,7 @@ resource "aws_cloudfront_distribution" "this" {
 
     viewer_protocol_policy = "redirect-to-https"
 
-    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_optimized.id
+    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_disabled.id
     origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
     response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
 
@@ -140,7 +140,7 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       error_code         = custom_error_response.value
       response_code      = 200
-      response_page_path = "/"
+      response_page_path = "/${var.default_root_object}"
     }
   }
 
