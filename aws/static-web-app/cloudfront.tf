@@ -11,10 +11,6 @@ data "aws_cloudfront_cache_policy" "caching_disabled" {
   id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
 }
 
-data "aws_cloudfront_origin_request_policy" "cors_custom_origin" {
-  id = "59781a5b-3903-41f3-afcb-af62929ccde1"
-}
-
 data "aws_cloudfront_origin_request_policy" "all_viewer" {
   id = "216adef6-5c7f-47e4-b989-5492eafa07d3"
 }
@@ -54,22 +50,6 @@ resource "aws_cloudfront_distribution" "this" {
     ssl_support_method       = "sni-only"
   }
 
-  dynamic "origin" {
-    for_each = var.api_gateway_origins
-
-    content {
-      origin_id   = origin.value.origin_id
-      domain_name = origin.value.domain_name
-
-      custom_origin_config {
-        http_port              = 80
-        https_port             = 443
-        origin_protocol_policy = "https-only"
-        origin_ssl_protocols   = ["TLSv1.2"]
-      }
-    }
-  }
-
   origin {
     origin_id                = local.s3_bucket_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.this.id
@@ -105,7 +85,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = var.auth_routes
+    for_each = var.auth_ordered_cache_behaviours
     content {
       path_pattern     = ordered_cache_behavior.value.path_pattern
       target_origin_id = local.auth_origin_id
@@ -163,10 +143,10 @@ resource "aws_cloudfront_distribution" "this" {
     response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
 
     dynamic "lambda_function_association" {
-      for_each = var.auth_enabled ? [var.auth_function_arn] : []
+      for_each = var.auth_enabled ? [var.auth_default_cache_behaviour] : []
       content {
         event_type = "viewer-request"
-        lambda_arn = lambda_function_association.value
+        lambda_arn = lambda_function_association.value.function_arn
       }
     }
   }

@@ -28,23 +28,17 @@ variable "spa_custom_error_response_codes" {
   type = list(number)
 }
 
-variable "api_gateway_origins" {
-  type = list(object({
-    origin_id   = string
-    domain_name = string
-  }))
-  default = []
-}
-
 variable "auth_enabled" {
   type = bool
 }
 
-variable "auth_function_arn" {
-  type = string
+variable "auth_default_cache_behaviour" {
+  type = object({
+    function_arn = string
+  })
 }
 
-variable "auth_routes" {
+variable "auth_ordered_cache_behaviours" {
   type = list(object({
     path_pattern = string
     function_arn = string
