@@ -20,7 +20,8 @@ variable "default_root_object" {
 }
 
 variable "s3_bucket_origin_id" {
-  type = string
+  type    = string
+  default = "web-app-s3-bucket"
 }
 
 variable "spa_enabled" {
