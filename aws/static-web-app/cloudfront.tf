@@ -1,6 +1,5 @@
 locals {
   auth_origin_id      = "auth"
-  s3_bucket_origin_id = "${var.name_prefix}-s3-bucket"
 }
 
 data "aws_cloudfront_cache_policy" "caching_optimized" {
@@ -51,7 +50,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   origin {
-    origin_id                = local.s3_bucket_origin_id
+    origin_id                = var.s3_bucket_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.this.id
     domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
   }
@@ -116,7 +115,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   default_cache_behavior {
-    target_origin_id = local.s3_bucket_origin_id
+    target_origin_id = var.s3_bucket_origin_id
 
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]

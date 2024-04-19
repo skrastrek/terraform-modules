@@ -19,6 +19,10 @@ variable "default_root_object" {
   default = "index.html"
 }
 
+variable "s3_bucket_origin_id" {
+  type = string
+}
+
 variable "spa_enabled" {
   type        = bool
   description = "Enable or disable SPA-specific features."
