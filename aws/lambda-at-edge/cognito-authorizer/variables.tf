@@ -1,4 +1,4 @@
-variable "function_name" {
+variable "name" {
   type = string
 }
 
