@@ -4,24 +4,19 @@ locals {
   node_project_path = "${path.module}/resources/nodejs"
 }
 
-resource "terraform_data" "npm_build" {
-  triggers_replace = {
-    index        = filebase64sha256("${local.node_project_path}/index.ts")
-    package      = filebase64sha256("${local.node_project_path}/package.json")
-    package_lock = filebase64sha256("${local.node_project_path}/package-lock.json")
-  }
-
-  provisioner "local-exec" {
-    command = "cd ${local.node_project_path} && npm run build"
-  }
+data "external" "npm_build" {
+  program = [
+    "bash", "-c", <<EOT
+(npm ci && npm run build) >&2 && echo "{\"filename\": \"index.js\"}"
+EOT
+  ]
+  working_dir = local.node_project_path
 }
 
 data "archive_file" "zip" {
   type        = "zip"
-  source_file = "${local.node_project_path}/dist/index.js"
+  source_file = "${local.node_project_path}/dist/${data.external.npm_build.result.filename}"
   output_path = "${local.node_project_path}/dist/lambda.zip"
-
-  depends_on = [terraform_data.npm_build]
 }
 
 resource "aws_lambda_function" "this" {
