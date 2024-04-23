@@ -26,8 +26,8 @@ const getJwtSourcesFromEnv = (): JwtSources => {
 class JwtExtractor {
     sources: JwtSources
 
-    private constructor(config: JwtSources) {
-        this.sources = config
+    private constructor(sources: JwtSources) {
+        this.sources = sources
     }
 
     static createFromEnv(): JwtExtractor {
