@@ -58,8 +58,6 @@ variable "s3_bucket_ordered_cache_behaviours" {
     cached_methods  = list(string)
 
     cache_policy_id            = string
-    origin_request_policy_id   = optional(string, null)
-    response_headers_policy_id = optional(string, null)
 
     compress = bool
 

@@ -3,20 +3,12 @@ locals {
   s3_bucket_origin_id = "${var.name_prefix}-s3-bucket"
 }
 
-data "aws_cloudfront_cache_policy" "caching_optimized" {
-  id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
-}
-
 data "aws_cloudfront_cache_policy" "caching_disabled" {
   id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
 }
 
 data "aws_cloudfront_origin_request_policy" "all_viewer" {
   id = "216adef6-5c7f-47e4-b989-5492eafa07d3"
-}
-
-data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
-  id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
 }
 
 data "aws_cloudfront_origin_request_policy" "cors_s3_origin" {
@@ -114,8 +106,8 @@ resource "aws_cloudfront_distribution" "this" {
       viewer_protocol_policy = ordered_cache_behavior.value.viewer_protocol_policy
 
       cache_policy_id            = ordered_cache_behavior.value.cache_policy_id
-      origin_request_policy_id   = ordered_cache_behavior.value.origin_request_policy_id
-      response_headers_policy_id = ordered_cache_behavior.value.response_headers_policy_id
+      origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.cors_s3_origin.id
+      response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
 
       dynamic "lambda_function_association" {
         for_each = (ordered_cache_behavior.value.lambda_function_association != null ?
