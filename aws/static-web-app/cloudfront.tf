@@ -93,9 +93,9 @@ resource "aws_cloudfront_distribution" "this" {
       response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
 
       lambda_function_association {
-        event_type   = "viewer-request"
         include_body = false
-        lambda_arn   = ordered_cache_behavior.value.function_arn
+        event_type   = ordered_cache_behavior.value.event_type
+        lambda_arn   = ordered_cache_behavior.value.lambda_arn
       }
     }
   }
@@ -144,8 +144,8 @@ resource "aws_cloudfront_distribution" "this" {
     dynamic "lambda_function_association" {
       for_each = var.auth_enabled ? [var.auth_default_cache_behaviour] : []
       content {
-        event_type = "viewer-request"
-        lambda_arn = lambda_function_association.value.function_arn
+        event_type = lambda_function_association.value.event_type
+        lambda_arn = lambda_function_association.value.lambda_arn
       }
     }
   }

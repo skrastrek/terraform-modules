@@ -34,14 +34,18 @@ variable "auth_enabled" {
 
 variable "auth_default_cache_behaviour" {
   type = object({
-    function_arn = string
+    lambda_arn   = string
+    event_type   = optional(string, "viewer-request")
+    include_body = optional(bool, false)
   })
 }
 
 variable "auth_ordered_cache_behaviours" {
   type = list(object({
     path_pattern = string
-    function_arn = string
+    lambda_arn   = string
+    event_type   = optional(string, "viewer-request")
+    include_body = optional(bool, false)
   }))
   default = []
 }
@@ -63,8 +67,9 @@ variable "s3_bucket_ordered_cache_behaviours" {
 
     lambda_function_association = optional(
       object({
-        event_type = string
-        lambda_arn = string
+        lambda_arn   = string
+        event_type   = optional(string, "viewer-request")
+        include_body = optional(bool, false)
       }),
       null
     )
