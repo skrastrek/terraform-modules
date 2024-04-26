@@ -54,12 +54,20 @@ variable "s3_bucket_ordered_cache_behaviours" {
     cached_methods  = list(string)
 
     cache_policy_id            = string
-    origin_request_policy_id   = string
-    response_headers_policy_id = string
+    origin_request_policy_id   = optional(string, data.aws_cloudfront_origin_request_policy.cors_s3_origin.id)
+    response_headers_policy_id = optional(string, data.aws_cloudfront_response_headers_policy.security_headers.id)
 
     compress = bool
 
     viewer_protocol_policy = string
+
+    lambda_function_association = optional(
+      object({
+        event_type = string
+        lambda_arn = string
+      }),
+      null
+    )
   }))
   default = []
 }
