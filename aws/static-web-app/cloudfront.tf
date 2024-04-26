@@ -118,8 +118,9 @@ resource "aws_cloudfront_distribution" "this" {
       response_headers_policy_id = ordered_cache_behavior.value.response_headers_policy_id
 
       dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.lambda_function_association != null ?
-          [ordered_cache_behavior.value.lambda_function_association] : []
+        for_each = (ordered_cache_behavior.value.lambda_function_association != null ?
+          [ordered_cache_behavior.value.lambda_function_association]
+          : [])
         content {
           event_type   = lambda_function_association.value.event_type
           lambda_arn   = lambda_function_association.value.lambda_arn
