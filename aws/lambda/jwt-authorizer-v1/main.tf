@@ -42,13 +42,13 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      JWT_AUDIENCE            = join(",", var.jwt_audience)
+      JWT_AUDIENCE            = var.jwt_audience != null ? join(",", var.jwt_audience) : null
       JWT_ISSUER              = var.jwt_issuer
       JWT_SCOPE               = var.jwt_scope
       JWT_SOURCE_HEADER_NAME  = var.jwt_source_header_name
       JWT_SOURCE_COOKIE_REGEX = var.jwt_source_cookie_regex
-      JWT_COGNITO_CLIENT_ID   = join(",", var.jwt_cognito_client_id)
-      JWT_COGNITO_GROUP       = join(",", var.jwt_cognito_group)
+      JWT_COGNITO_CLIENT_ID   = var.jwt_cognito_client_id != null ? join(",", var.jwt_cognito_client_id) : null
+      JWT_COGNITO_GROUP       = var.jwt_cognito_group != null ? join(",", var.jwt_cognito_group) : null
       JWT_COGNITO_TOKEN_USE   = var.jwt_cognito_token_use
     }
   }
