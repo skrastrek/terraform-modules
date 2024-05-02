@@ -6,6 +6,11 @@ import {
     APIGatewaySimpleAuthorizerWithContextResult
 } from "aws-lambda";
 import {validateCognitoJwtFields} from "aws-jwt-verify/cognito-verifier";
+import {
+    CognitoIdentityProviderClient,
+    GetUserCommand,
+    GetUserCommandOutput
+} from "@aws-sdk/client-cognito-identity-provider";
 
 interface JwtSources {
     headerName: string | undefined
@@ -16,6 +21,8 @@ interface RequestCookie {
     name: string,
     value: string
 }
+
+const cognitoIdentityProviderClient = new CognitoIdentityProviderClient()
 
 const getJwtSourcesFromEnv = (): JwtSources => {
     return {
@@ -101,8 +108,10 @@ export const handler: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<JwtP
     try {
         // If the token is not valid, an error is thrown:
         const verifiedJwt = await jwtVerifier.verify(jwt);
+        const userData = await getUserData(jwt);
+
         console.log(JSON.stringify(verifiedJwt))
-        return authorizedResult(verifiedJwt)
+        return authorizedResult(verifiedJwt, userData)
     } catch (error) {
         console.error("Invalid JWT:", error.message)
         return unauthorizedResult()
@@ -116,10 +125,13 @@ function unauthorizedResult(): APIGatewaySimpleAuthorizerWithContextResult<JwtPa
     }
 }
 
-function authorizedResult(jwt: JwtPayload): APIGatewaySimpleAuthorizerWithContextResult<JwtPayload> {
+function authorizedResult(jwt: JwtPayload, user: GetUserCommandOutput): APIGatewaySimpleAuthorizerWithContextResult<JwtPayload> {
     return {
         isAuthorized: true,
-        context: jwt
+        context: {
+            ...jwt,
+            attributes: user.UserAttributes.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {});
+        }
     }
 }
 
@@ -140,4 +152,10 @@ function isTokenUse(value?: string): value is "id" | "access" | undefined {
         default:
             return false
     }
+}
+
+function getUserData(accessToken: string): Promise<GetUserCommandOutput> {
+    return cognitoIdentityProviderClient.send(new GetUserCommand({
+        AccessToken: accessToken
+    }))
 }
