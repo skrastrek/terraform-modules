@@ -82,13 +82,13 @@ const jwtExtractor = JwtExtractor.createFromEnv()
 const jwtVerifier = JwtRsaVerifier.create([
     {
         issuer: process.env.JWT_ISSUER,
-        audience: process.env.JWT_AUDIENCE?.split(","),
+        audience: process.env.JWT_AUDIENCE?.split(",") ?? null,
         scope: process.env.JWT_SCOPE,
         customJwtCheck: ({payload}) =>
             validateCognitoJwtFields(payload, {
-                tokenUse: validateTokenUse(process.env.JWT_COGNITO_TOKEN_USE),
-                clientId: process.env.JWT_COGNITO_CLIENT_ID?.split(","),
-                groups: process.env.JWT_COGNITO_GROUP?.split(",")
+                tokenUse: validateTokenUse(process.env.JWT_COGNITO_TOKEN_USE) ?? null,
+                clientId: process.env.JWT_COGNITO_CLIENT_ID?.split(",") ?? null,
+                groups: process.env.JWT_COGNITO_GROUP?.split(",") ?? null
             }),
     },
 ]);
