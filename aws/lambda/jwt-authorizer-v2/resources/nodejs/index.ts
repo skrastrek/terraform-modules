@@ -5,6 +5,7 @@ import {
     APIGatewayRequestAuthorizerEventV2,
     APIGatewaySimpleAuthorizerWithContextResult
 } from "aws-lambda";
+import {validateCognitoJwtFields} from "aws-jwt-verify/cognito-verifier";
 
 interface JwtSources {
     headerName: string | undefined
@@ -79,8 +80,14 @@ const jwtExtractor = JwtExtractor.createFromEnv()
 const jwtVerifier = JwtRsaVerifier.create([
     {
         issuer: process.env.JWT_ISSUER,
-        audience: process.env.JWT_AUDIENCE.split(","),
-        scope: process.env.JWT_SCOPE
+        audience: process.env.JWT_AUDIENCE?.split(","),
+        scope: process.env.JWT_SCOPE,
+        customJwtCheck: ({payload}) =>
+            validateCognitoJwtFields(payload, {
+                tokenUse: validateTokenUse(process.env.JWT_COGNITO_TOKEN_USE),
+                clientId: process.env.JWT_COGNITO_CLIENT_ID?.split(","),
+                groups: process.env.JWT_COGNITO_GROUP?.split(",")
+            }),
     },
 ]);
 
@@ -113,5 +120,24 @@ function authorizedResult(jwt: JwtPayload): APIGatewaySimpleAuthorizerWithContex
     return {
         isAuthorized: true,
         context: jwt
+    }
+}
+
+function validateTokenUse(value?: string) {
+    if (isTokenUse(value)) {
+        return value
+    } else {
+        throw new Error(`Invalid token use: ${value}`);
+    }
+}
+
+function isTokenUse(value?: string): value is "id" | "access" | undefined {
+    switch (value) {
+        case "id":
+        case "access":
+        case undefined:
+            return true
+        default:
+            return false
     }
 }

@@ -47,6 +47,9 @@ resource "aws_lambda_function" "this" {
       JWT_SCOPE               = var.jwt_scope
       JWT_SOURCE_HEADER_NAME  = var.jwt_source_header_name
       JWT_SOURCE_COOKIE_REGEX = var.jwt_source_cookie_regex
+      JWT_COGNITO_CLIENT_ID   = join(",", var.jwt_cognito_client_id)
+      JWT_COGNITO_GROUP       = join(",", var.jwt_cognito_group)
+      JWT_COGNITO_TOKEN_USE   = var.jwt_cognito_token_use
     }
   }
 }

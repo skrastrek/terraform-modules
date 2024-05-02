@@ -27,6 +27,26 @@ variable "jwt_source_cookie_regex" {
   type = string
 }
 
+variable "jwt_cognito_client_id" {
+  type    = list(string)
+  default = null
+}
+
+variable "jwt_cognito_group" {
+  type    = list(string)
+  default = null
+}
+
+variable "jwt_cognito_token_use" {
+  type    = string
+  default = null
+
+  validation {
+    condition     = var.jwt_cognito_token_use == "access" || var.jwt_cognito_token_use == "id" || var.jwt_cognito_token_use == null
+    error_message = "jwt_cognito_token_use value must be either 'access', 'id' or null"
+  }
+}
+
 variable "cloudwatch_logs_retention_in_days" {
   type = number
 }
