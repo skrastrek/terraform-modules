@@ -130,7 +130,7 @@ function authorizedResult(jwt: JwtPayload, user: GetUserCommandOutput): APIGatew
         isAuthorized: true,
         context: {
             ...jwt,
-            attributes: user.UserAttributes.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {});
+            attributes: user.UserAttributes.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {})
         }
     }
 }
