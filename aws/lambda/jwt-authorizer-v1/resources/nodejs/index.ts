@@ -86,23 +86,23 @@ const jwtVerifier = JwtRsaVerifier.create([
     },
 ]);
 
-function unauthorizedResult(event: APIGatewayRequestAuthorizerEvent): APIGatewayAuthorizerWithContextResult<JwtPayload> {
-    return {
-        principalId: "unknown",
-        policyDocument: {
-            Version: "2012-10-17",
-            Statement: [
-                {
-                    Action: "execute-api:Invoke",
-                    Effect: "Deny",
-                    Resource: event.methodArn
-                }
-            ]
-        },
-        context: undefined,
-        usageIdentifierKey: undefined
+export const handler: APIGatewayRequestAuthorizerWithContextHandler<JwtPayload> = async event => {
+    const jwt = jwtExtractor.extractFrom(event)
+
+    if (jwt === undefined) {
+        throw new Error("Unauthorized");
     }
-}
+
+    try {
+        // If the token is not valid, an error is thrown:
+        const verifiedJwt = await jwtVerifier.verify(jwt);
+        console.log(JSON.stringify(verifiedJwt))
+        return authorizedResult(event, verifiedJwt)
+    } catch (error) {
+        console.error("Invalid JWT:", error.message)
+        throw new Error("Unauthorized");
+    }
+};
 
 function authorizedResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload): APIGatewayAuthorizerWithContextResult<JwtPayload> {
     return {
@@ -121,20 +121,3 @@ function authorizedResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPaylo
         usageIdentifierKey: jwt.sub
     }
 }
-
-export const handler: APIGatewayRequestAuthorizerWithContextHandler<JwtPayload> = async event => {
-    const jwt = jwtExtractor.extractFrom(event)
-
-    if (jwt === undefined) {
-        throw new Error("Unauthorized");
-    }
-
-    try {
-        // If the token is not valid, an error is thrown:
-        const verifiedJwt = await jwtVerifier.verify(jwt);
-        console.log(JSON.stringify(verifiedJwt))
-        return authorizedResult(event, verifiedJwt)
-    } catch {
-        throw new Error("Unauthorized");
-    }
-};

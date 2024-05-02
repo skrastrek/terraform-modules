@@ -84,6 +84,24 @@ const jwtVerifier = JwtRsaVerifier.create([
     },
 ]);
 
+export const handler: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<JwtPayload> = async event => {
+    const jwt = jwtExtractor.extractFrom(event)
+
+    if (jwt === undefined) {
+        throw new Error("Unauthorized");
+    }
+
+    try {
+        // If the token is not valid, an error is thrown:
+        const verifiedJwt = await jwtVerifier.verify(jwt);
+        console.log(JSON.stringify(verifiedJwt))
+        return authorizedResult(verifiedJwt)
+    } catch (error) {
+        console.error("Invalid JWT:", error.message)
+        return unauthorizedResult()
+    }
+};
+
 function unauthorizedResult(): APIGatewaySimpleAuthorizerWithContextResult<JwtPayload> {
     return {
         isAuthorized: false,
@@ -97,20 +115,3 @@ function authorizedResult(jwt: JwtPayload): APIGatewaySimpleAuthorizerWithContex
         context: jwt
     }
 }
-
-export const handler: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<JwtPayload> = async event => {
-    const jwt = jwtExtractor.extractFrom(event)
-
-    if (jwt === undefined) {
-        throw new Error("Unauthorized");
-    }
-
-    try {
-        // If the token is not valid, an error is thrown:
-        const verifiedJwt = await jwtVerifier.verify(jwt);
-        console.log(JSON.stringify(verifiedJwt))
-        return authorizedResult(verifiedJwt)
-    } catch {
-        throw new Error("Unauthorized");
-    }
-};
