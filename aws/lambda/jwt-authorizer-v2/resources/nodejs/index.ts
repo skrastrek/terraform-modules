@@ -78,8 +78,8 @@ const jwtExtractor = JwtExtractor.createFromEnv()
 
 const jwtVerifier = JwtRsaVerifier.create([
     {
-        issuer: process.env.JWT_ISSUER.split(","),
-        audience: process.env.JWT_AUDIENCE,
+        issuer: process.env.JWT_ISSUER,
+        audience: process.env.JWT_AUDIENCE.split(","),
         scope: process.env.JWT_SCOPE
     },
 ]);
