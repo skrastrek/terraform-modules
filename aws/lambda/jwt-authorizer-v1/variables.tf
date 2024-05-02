@@ -7,7 +7,7 @@ variable "memory_size" {
 }
 
 variable "jwt_audience" {
-  type = string
+  type = list(string)
 }
 
 variable "jwt_issuer" {

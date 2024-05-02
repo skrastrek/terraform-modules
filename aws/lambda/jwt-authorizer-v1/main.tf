@@ -2,7 +2,6 @@ data "aws_region" "current" {}
 
 locals {
   node_project_path = "${path.module}/resources/nodejs"
-
 }
 
 data "external" "npm_build" {
@@ -43,7 +42,7 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      JWT_AUDIENCE            = var.jwt_audience
+      JWT_AUDIENCE            = join(",", var.jwt_audience)
       JWT_ISSUER              = var.jwt_issuer
       JWT_SCOPE               = var.jwt_scope
       JWT_SOURCE_HEADER_NAME  = var.jwt_source_header_name

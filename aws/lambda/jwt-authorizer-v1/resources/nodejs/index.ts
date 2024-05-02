@@ -1,9 +1,9 @@
 import {JwtRsaVerifier} from "aws-jwt-verify/jwt-rsa";
 import {JwtPayload} from "aws-jwt-verify/jwt-model";
 import {
-    APIGatewayRequestAuthorizerHandler,
+    APIGatewayRequestAuthorizerWithContextHandler,
     APIGatewayRequestAuthorizerEvent,
-    APIGatewayAuthorizerResult
+    APIGatewayAuthorizerWithContextResult
 } from "aws-lambda";
 
 interface JwtSources {
@@ -11,7 +11,7 @@ interface JwtSources {
     cookieRegex: RegExp | undefined
 }
 
-interface CookieRequest {
+interface RequestCookie {
     name: string,
     value: string
 }
@@ -57,12 +57,12 @@ class JwtExtractor {
         return undefined
     }
 
-    private extractFromCookie(event: APIGatewayRequestAuthorizerEvent): CookieRequest | undefined {
+    private extractFromCookie(event: APIGatewayRequestAuthorizerEvent): RequestCookie | undefined {
         return this.extractCookies(event)
             .find((cookie) => this.sources.cookieRegex.test(cookie.name))
     }
 
-    private extractCookies(event: APIGatewayRequestAuthorizerEvent): Array<CookieRequest> {
+    private extractCookies(event: APIGatewayRequestAuthorizerEvent): Array<RequestCookie> {
         return event.headers["cookie"]
                 ?.split("; ")
                 ?.map((value) => {
@@ -80,13 +80,13 @@ const jwtExtractor = JwtExtractor.createFromEnv()
 
 const jwtVerifier = JwtRsaVerifier.create([
     {
-        issuer: process.env.JWT_ISSUER,
+        issuer: process.env.JWT_ISSUER.split(","),
         audience: process.env.JWT_AUDIENCE,
         scope: process.env.JWT_SCOPE
     },
 ]);
 
-function unauthorizedResult(event: APIGatewayRequestAuthorizerEvent): APIGatewayAuthorizerResult {
+function unauthorizedResult(event: APIGatewayRequestAuthorizerEvent): APIGatewayAuthorizerWithContextResult<JwtPayload> {
     return {
         principalId: "unknown",
         policyDocument: {
@@ -99,11 +99,12 @@ function unauthorizedResult(event: APIGatewayRequestAuthorizerEvent): APIGateway
                 }
             ]
         },
+        context: undefined,
         usageIdentifierKey: undefined
     }
 }
 
-function authorizedResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload): APIGatewayAuthorizerResult {
+function authorizedResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload): APIGatewayAuthorizerWithContextResult<JwtPayload> {
     return {
         principalId: jwt.sub,
         policyDocument: {
@@ -116,20 +117,12 @@ function authorizedResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPaylo
                 }
             ]
         },
-        context: {
-            exp: jwt.exp,
-            iat: jwt.iat,
-            iss: jwt.iss,
-            jti: jwt.jti,
-            nbf: jwt.nbf,
-            scope: jwt.scope,
-            sub: jwt.sub
-        },
+        context: jwt,
         usageIdentifierKey: jwt.sub
     }
 }
 
-export const handler: APIGatewayRequestAuthorizerHandler = async event => {
+export const handler: APIGatewayRequestAuthorizerWithContextHandler<JwtPayload> = async event => {
     const jwt = jwtExtractor.extractFrom(event)
 
     if (jwt === undefined) {
