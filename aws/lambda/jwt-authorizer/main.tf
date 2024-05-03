@@ -28,7 +28,7 @@ resource "aws_lambda_function" "this" {
   runtime     = "nodejs20.x"
   memory_size = var.memory_size
 
-  handler = "index.handler"
+  handler = var.payload_format_version == "1.0" ? "index.handlerV1" : "index.handlerV2"
 
   package_type     = title(data.archive_file.zip.type)
   filename         = data.archive_file.zip.output_path

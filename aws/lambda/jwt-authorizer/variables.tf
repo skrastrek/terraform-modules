@@ -2,8 +2,13 @@ variable "name" {
   type = string
 }
 
-variable "memory_size" {
+variable "cloudwatch_logs_retention_in_days" {
   type = number
+}
+
+variable "cloudwatch_logs_kms_key_id" {
+  type    = string
+  default = null
 }
 
 variable "jwt_audience" {
@@ -47,13 +52,17 @@ variable "jwt_cognito_token_use" {
   }
 }
 
-variable "cloudwatch_logs_retention_in_days" {
+variable "memory_size" {
   type = number
 }
 
-variable "cloudwatch_logs_kms_key_id" {
-  type    = string
-  default = null
+variable "payload_format_version" {
+  type = string
+
+  validation {
+    condition     = var.payload_format_version == "1.0" || var.payload_format_version == "2.0"
+    error_message = "payload_format_version value must be either '1.0' or '2.0'."
+  }
 }
 
 variable "tags" {
