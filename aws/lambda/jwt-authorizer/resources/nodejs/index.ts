@@ -18,6 +18,8 @@ import {JwtExtractor} from "./jwt-extractor";
 type AuthContextV1 = { [key: string]: boolean | number | string }
 type AuthContextV2 = { [key: string]: boolean | number | string | string[] }
 
+type UserAttributes = { [key: string]: string }
+
 const cognitoIdentityProviderClient = new CognitoIdentityProviderClient()
 
 const jwtExtractor = JwtExtractor.createFromEnv()
@@ -128,7 +130,7 @@ function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jw
             exp: jwt.exp,
             iss: jwt.iss,
             sub: jwt.sub,
-            aud: jwt.aud.toString(),
+            aud: jwt.aud?.toString(),
             nbf: jwt.nbf,
             iat: jwt.iat,
             scope: jwt.scope,
@@ -146,7 +148,7 @@ function simpleAuthorizerWithContextResult(jwt: JwtPayload, userData?: GetUserCo
             exp: jwt.exp,
             iss: jwt.iss,
             sub: jwt.sub,
-            aud: jwt.aud.toString(),
+            aud: jwt.aud?.toString(),
             nbf: jwt.nbf,
             iat: jwt.iat,
             scope: jwt.scope,
@@ -170,7 +172,7 @@ function isAccessToken(jwt: JwtPayload): boolean {
     return jwt.token_use === "access"
 }
 
-function userAttributes(userData?: GetUserCommandOutput): { [key: string]: string } {
+function userAttributes(userData?: GetUserCommandOutput): UserAttributes {
     return userData?.UserAttributes?.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {}) ?? {}
 }
 
