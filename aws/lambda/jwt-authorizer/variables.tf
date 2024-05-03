@@ -20,7 +20,7 @@ variable "jwt_issuer" {
 }
 
 variable "jwt_scope" {
-  type = string
+  type = list(string)
 }
 
 variable "jwt_source_header_name" {
