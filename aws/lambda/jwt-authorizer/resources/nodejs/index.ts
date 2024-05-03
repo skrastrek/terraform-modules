@@ -14,9 +14,13 @@ import {
     GetUserCommandOutput
 } from "@aws-sdk/client-cognito-identity-provider";
 import {JwtExtractor} from "./jwt-extractor";
+import {Json} from "aws-jwt-verify/safe-json-parse";
 
-type AuthContextV1 = { [key: string]: boolean | number | string }
-type AuthContextV2 = { [key: string]: boolean | number | string | string[] }
+type AuthContextV1 = { [key: string]: Primitive }
+type AuthContextV2 = { [key: string]: boolean | number | string | string[] | Json }
+
+type Primitive = boolean | number | string
+type PrimitiveValues = { [key: string]: Primitive }
 
 type UserAttributes = { [key: string]: string }
 
@@ -37,8 +41,6 @@ const jwtVerifier = JwtRsaVerifier.create([
             }),
     },
 ]);
-
-
 
 export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContextV1> = async event => {
     const jwt = jwtExtractor.extractFromAuthorizerEventV1(event)
@@ -127,14 +129,7 @@ function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jw
             ]
         },
         context: {
-            exp: jwt.exp,
-            iss: jwt.iss,
-            sub: jwt.sub,
-            aud: jwt.aud?.toString(),
-            nbf: jwt.nbf,
-            iat: jwt.iat,
-            scope: jwt.scope,
-            jti: jwt.jti,
+            ...primitiveValues(jwt),
             ...userAttributes(userData)
         },
         usageIdentifierKey: jwt.sub
@@ -145,14 +140,7 @@ function simpleAuthorizerWithContextResult(jwt: JwtPayload, userData?: GetUserCo
     return {
         isAuthorized: true,
         context: {
-            exp: jwt.exp,
-            iss: jwt.iss,
-            sub: jwt.sub,
-            aud: jwt.aud?.toString(),
-            nbf: jwt.nbf,
-            iat: jwt.iat,
-            scope: jwt.scope,
-            jti: jwt.jti,
+            ...jwt,
             ...userAttributes(userData)
         }
     }
@@ -200,6 +188,24 @@ function isTokenUse(value?: string): value is "id" | "access" | undefined {
         case "access":
         case undefined:
             return true
+        default:
+            return false
+    }
+}
+
+function primitiveValues(object: any): PrimitiveValues {
+    return Object.entries(object)
+        .filter<[string, Primitive]>((entry): entry is [string, Primitive] => isPrimitive(entry[1]))
+        .reduce((result, curr) => ({...result, [curr[0]]: curr[1]}), {})
+}
+
+function isPrimitive(value?: any): value is Primitive {
+    switch (typeof value) {
+        case "boolean":
+        case "string":
+        case "number":
+            return true
+
         default:
             return false
     }
