@@ -57,7 +57,7 @@ export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContex
     }
 
     // Enrich context with user attributes from AWS Cognito
-    if (isIssuedByAwsCognito(verifiedJwt.iss) && isAccessToken(verifiedJwt)) {
+    if (canContextBeEnrichedWithAwsCognitoUserAttributes(verifiedJwt)) {
         let userData: GetUserCommandOutput
         try {
             // Get user data from verified jwt:
@@ -90,7 +90,7 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
     }
 
     // Enrich context with user attributes from AWS Cognito
-    if (isIssuedByAwsCognito(verifiedJwt.iss) && isAccessToken(verifiedJwt)) {
+    if (canContextBeEnrichedWithAwsCognitoUserAttributes(verifiedJwt)) {
         let userData: GetUserCommandOutput
         try {
             // Get user data from verified jwt:
@@ -158,6 +158,16 @@ function simpleAuthorizerWithContextResult(jwt: JwtPayload, userData?: GetUserCo
     }
 }
 
+function canContextBeEnrichedWithAwsCognitoUserAttributes(jwt: JwtPayload): boolean {
+    return isAccessToken(jwt)
+        && hasAwsCognitoUserAdminScope(jwt.scope)
+        && isIssuedByAwsCognito(jwt.iss)
+}
+
+function isAccessToken(jwt: JwtPayload): boolean {
+    return jwt.token_use === "access"
+}
+
 function isIssuedByAwsCognito(iss?: string): boolean {
     if (iss !== undefined) {
         if (iss.startsWith("https://cognito-idp.") && iss.includes("amazonaws.com")) {
@@ -168,8 +178,8 @@ function isIssuedByAwsCognito(iss?: string): boolean {
     return false
 }
 
-function isAccessToken(jwt: JwtPayload): boolean {
-    return jwt.token_use === "access"
+function hasAwsCognitoUserAdminScope(scope?: string): boolean {
+    return scope?.includes("aws.cognito.signin.user.admin")
 }
 
 function userAttributes(userData?: GetUserCommandOutput): UserAttributes {
