@@ -15,6 +15,9 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import {JwtExtractor} from "./jwt-extractor";
 
+type AuthContextV1 = { [key: string]: boolean | number | string }
+type AuthContextV2 = { [key: string]: boolean | number | string | string[] }
+
 const cognitoIdentityProviderClient = new CognitoIdentityProviderClient()
 
 const jwtExtractor = JwtExtractor.createFromEnv()
@@ -33,7 +36,9 @@ const jwtVerifier = JwtRsaVerifier.create([
     },
 ]);
 
-export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<JwtPayload> = async event => {
+
+
+export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContextV1> = async event => {
     const jwt = jwtExtractor.extractFromAuthorizerEventV1(event)
 
     if (jwt === undefined) {
@@ -66,7 +71,7 @@ export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<JwtPayload
     return authorizerWithContextResult(event, verifiedJwt)
 };
 
-export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<JwtPayload> = async event => {
+export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<AuthContextV2> = async event => {
     const jwt = jwtExtractor.extractFromAuthorizerEventV2(event)
 
     if (jwt === undefined) {
@@ -99,24 +104,14 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Jw
     return simpleAuthorizerWithContextResult(verifiedJwt)
 };
 
-function unauthorizedResult(): APIGatewaySimpleAuthorizerWithContextResult<JwtPayload> {
+function unauthorizedResult(): APIGatewaySimpleAuthorizerWithContextResult<AuthContextV2> {
     return {
         isAuthorized: false,
         context: undefined
     }
 }
 
-function simpleAuthorizerWithContextResult(jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewaySimpleAuthorizerWithContextResult<JwtPayload> {
-    return {
-        isAuthorized: true,
-        context: {
-            ...jwt,
-            ...userAttributes(userData)
-        }
-    }
-}
-
-function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewayAuthorizerWithContextResult<JwtPayload> {
+function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewayAuthorizerWithContextResult<AuthContextV1> {
     return {
         principalId: jwt.sub,
         policyDocument: {
@@ -130,10 +125,34 @@ function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jw
             ]
         },
         context: {
-            ...jwt,
+            exp: jwt.exp,
+            iss: jwt.iss,
+            sub: jwt.sub,
+            aud: jwt.aud.toString(),
+            nbf: jwt.nbf,
+            iat: jwt.iat,
+            scope: jwt.scope,
+            jti: jwt.jti,
             ...userAttributes(userData)
         },
         usageIdentifierKey: jwt.sub
+    }
+}
+
+function simpleAuthorizerWithContextResult(jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewaySimpleAuthorizerWithContextResult<AuthContextV2> {
+    return {
+        isAuthorized: true,
+        context: {
+            exp: jwt.exp,
+            iss: jwt.iss,
+            sub: jwt.sub,
+            aud: jwt.aud.toString(),
+            nbf: jwt.nbf,
+            iat: jwt.iat,
+            scope: jwt.scope,
+            jti: jwt.jti,
+            ...userAttributes(userData)
+        }
     }
 }
 
@@ -151,7 +170,7 @@ function isAccessToken(jwt: JwtPayload): boolean {
     return jwt.token_use === "access"
 }
 
-function userAttributes(userData?: GetUserCommandOutput): { [name: string]: string } {
+function userAttributes(userData?: GetUserCommandOutput): { [key: string]: string } {
     return userData?.UserAttributes?.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {}) ?? {}
 }
 
