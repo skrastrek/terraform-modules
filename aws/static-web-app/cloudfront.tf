@@ -53,7 +53,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "origin" {
-    for_each = var.auth_ordered_cache_behaviours != [] ? [local.auth_origin_id] : []
+    for_each = length(var.auth_ordered_cache_behaviours) > 0 ? [local.auth_origin_id] : []
     content {
       origin_id   = local.auth_origin_id
       domain_name = "will-never-be-reached.org"
