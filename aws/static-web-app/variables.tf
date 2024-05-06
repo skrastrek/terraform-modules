@@ -28,16 +28,13 @@ variable "spa_custom_error_response_codes" {
   type = list(number)
 }
 
-variable "auth_enabled" {
-  type = bool
-}
-
 variable "auth_default_cache_behaviour" {
   type = object({
     lambda_arn   = string
     event_type   = optional(string, "viewer-request")
     include_body = optional(bool, false)
   })
+  default = null
 }
 
 variable "auth_ordered_cache_behaviours" {

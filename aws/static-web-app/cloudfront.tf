@@ -53,7 +53,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "origin" {
-    for_each = var.auth_enabled ? [local.auth_origin_id] : []
+    for_each = var.auth_ordered_cache_behaviours != [] ? [local.auth_origin_id] : []
     content {
       origin_id   = local.auth_origin_id
       domain_name = "will-never-be-reached.org"
@@ -68,7 +68,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = var.auth_enabled ? var.auth_ordered_cache_behaviours : []
+    for_each = var.auth_ordered_cache_behaviours
     content {
       path_pattern     = ordered_cache_behavior.value.path_pattern
       target_origin_id = local.auth_origin_id
@@ -137,7 +137,7 @@ resource "aws_cloudfront_distribution" "this" {
     response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
 
     dynamic "lambda_function_association" {
-      for_each = var.auth_enabled ? [var.auth_default_cache_behaviour] : []
+      for_each = var.auth_default_cache_behaviour != null ? [var.auth_default_cache_behaviour] : []
       content {
         event_type   = lambda_function_association.value.event_type
         lambda_arn   = lambda_function_association.value.lambda_arn
