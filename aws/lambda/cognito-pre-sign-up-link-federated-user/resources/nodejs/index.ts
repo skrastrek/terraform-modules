@@ -1,7 +1,7 @@
 import {
     AdminCreateUserCommand,
     AdminLinkProviderForUserCommand,
-    AdminSetUserPasswordCommand,
+    AdminSetUserPasswordCommand, AdminUpdateUserAttributesCommand,
     AttributeType,
     CognitoIdentityProviderClient,
     ListUsersCommand,
@@ -53,12 +53,12 @@ export const handler: PreSignUpTriggerHandler = async event => {
             );
         } else {
             //1. create a native cognito account
-            const userAttributes = createUserAttributes(providerName, event.request.userAttributes)
+            const userAttributes = createUserAttributes(event.request.userAttributes)
             console.log(JSON.stringify(userAttributes))
-            const createdCognitoUser = await adminCreateUser(userPoolId, email, userAttributes);
+            const createdCognitoUser = await createUser(userPoolId, email, userAttributes);
 
             //2. change the password, to change status from FORCE_CHANGE_PASSWORD to CONFIRMED
-            await adminSetUserPassword(userPoolId, email);
+            await setUserPassword(userPoolId, email);
 
             //3. merge the social and the native accounts
             const cognitoNativeUsername =
@@ -69,30 +69,21 @@ export const handler: PreSignUpTriggerHandler = async event => {
                 providerName,
                 userPoolId
             );
+
+            // Facebook does not include email_verified claim, but the email can be trusted.
+            if (providerName === "Facebook") {
+                await verifyEmail(userPoolId, email);
+            }
         }
         event.response.autoConfirmUser = true;
         event.response.autoVerifyEmail = true;
-    }
-
-    if (triggerSource === "PreSignUp_AdminCreateUser") {
-        if (event.request.userAttributes.hasOwnProperty(CLAIM_EMAIL)
-            && event.request.userAttributes[CLAIM_EMAIL_VERIFIED] === "true") {
-            event.response.autoConfirmUser = true;
-            event.response.autoVerifyEmail = true;
-        }
     }
 
     console.log("Result:", JSON.stringify(event))
     return event
 }
 
-const createUserAttributes = (providerName: string, attributes: StringMap): AttributeType[] => {
-
-    // Facebook does not include email_verified claim, but the email can be trusted.
-    if (providerName === "Facebook") {
-        attributes[CLAIM_EMAIL_VERIFIED] = "true"
-    }
-
+const createUserAttributes = (attributes: StringMap): AttributeType[] => {
     return Object.entries(attributes)
         .map((entry) => ({
             Name: entry[0],
@@ -121,6 +112,19 @@ const findUserByEmail = async (userPoolId: string, email: string) => {
     }
 };
 
+const verifyEmail = async (userPoolId: string, username: string) => {
+    return cognito.send(new AdminUpdateUserAttributesCommand({
+        UserPoolId: userPoolId,
+        Username: username,
+        UserAttributes: [
+            {
+                Name: CLAIM_EMAIL_VERIFIED,
+                Value: "true"
+            }
+        ]
+    }))
+}
+
 const linkAccounts = async (
     sourceUserId: string,
     destinationUserId: string,
@@ -147,7 +151,7 @@ const linkAccounts = async (
     }
 };
 
-const adminCreateUser = async (userPoolId: string, username: string, userAttributes: AttributeType[]) => {
+const createUser = async (userPoolId: string, username: string, userAttributes: AttributeType[]) => {
     return cognito.send(new AdminCreateUserCommand({
         UserPoolId: userPoolId,
         // SUPPRESS prevents sending an email with the temporary password
@@ -158,7 +162,7 @@ const adminCreateUser = async (userPoolId: string, username: string, userAttribu
     }))
 };
 
-const adminSetUserPassword = async (userPoolId: string, email: string) => {
+const setUserPassword = async (userPoolId: string, email: string) => {
     return cognito.send(new AdminSetUserPasswordCommand({
         Password: generatePassword(),
         UserPoolId: userPoolId,
