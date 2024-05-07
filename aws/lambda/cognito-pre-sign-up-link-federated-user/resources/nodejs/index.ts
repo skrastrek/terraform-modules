@@ -11,6 +11,9 @@ import {StringMap} from "aws-lambda/trigger/cognito-user-pool-trigger/_common";
 
 const cognito = new CognitoIdentityProviderClient()
 
+const CLAIM_EMAIL = "email"
+const CLAIM_EMAIL_VERIFIED = "email_verified"
+
 export const handler: PreSignUpTriggerHandler = async event => {
 
     console.log("Event:", JSON.stringify(event))
@@ -70,6 +73,15 @@ export const handler: PreSignUpTriggerHandler = async event => {
         event.response.autoConfirmUser = true;
         event.response.autoVerifyEmail = true;
     }
+
+    if (triggerSource === "PreSignUp_AdminCreateUser") {
+        if (event.request.userAttributes.hasOwnProperty(CLAIM_EMAIL)
+            && event.request.userAttributes[CLAIM_EMAIL_VERIFIED] === "true") {
+            event.response.autoConfirmUser = true;
+            event.response.autoVerifyEmail = true;
+        }
+    }
+
     console.log("Result:", JSON.stringify(event))
     return event
 }
@@ -78,7 +90,7 @@ const createUserAttributes = (providerName: string, attributes: StringMap): Attr
 
     // Facebook does not include email_verified claim, but the email can be trusted.
     if (providerName === "Facebook") {
-        attributes.email_verified = "true"
+        attributes[CLAIM_EMAIL_VERIFIED] = "true"
     }
 
     return Object.entries(attributes)
