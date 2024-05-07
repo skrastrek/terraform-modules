@@ -75,20 +75,20 @@ export const handler: PreSignUpTriggerHandler = async event => {
     return event
 }
 
-const createUserAttributes = (providerName: string, attributes: StringMap): AttributeType[] =>
-    Object.entries(attributes)
+const createUserAttributes = (providerName: string, attributes: StringMap): AttributeType[] => {
+
+    // Facebook does not include email_verified claim, but the email can be trusted.
+    if (providerName === "Facebook") {
+        attributes.email_verified = "true"
+    }
+
+    return Object.entries(attributes)
         .map((entry) => ({
             Name: entry[0],
             Value: entry[1]
         }))
-        .filter(attribute => !attribute.Name.startsWith("cognito:"))
-        .concat(providerName === "Facebook" ?
-            [{
-                Name: "email_verified",
-                Value: "true"
-            }] :
-            []
-        )
+        .filter(attribute => !attribute.Name.startsWith("cognito:"));
+}
 
 const findUserByEmail = async (userPoolId: string, email: string) => {
     try {
