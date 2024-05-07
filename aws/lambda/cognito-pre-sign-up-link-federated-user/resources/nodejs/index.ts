@@ -7,6 +7,7 @@ import {
     ListUsersCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import {PreSignUpTriggerHandler} from "aws-lambda";
+import {StringMap} from "aws-lambda/trigger/cognito-user-pool-trigger/_common";
 
 const cognito = new CognitoIdentityProviderClient()
 
@@ -51,15 +52,7 @@ export const handler: PreSignUpTriggerHandler = async event => {
             );
         } else {
             //1. create a native cognito account
-            const attributes: AttributeType[] = Object.entries(event.request.userAttributes)
-                .map((entry) => {
-                    return {
-                        Name: entry[0],
-                        Value: entry[1]
-                    }
-                })
-
-            const createdCognitoUser = await adminCreateUser(userPoolId, email, attributes);
+            const createdCognitoUser = await adminCreateUser(userPoolId, email, createUserAttributes(event.request.userAttributes));
 
             //2. change the password, to change status from FORCE_CHANGE_PASSWORD to CONFIRMED
             await adminSetUserPassword(userPoolId, email);
@@ -80,7 +73,17 @@ export const handler: PreSignUpTriggerHandler = async event => {
     return event
 }
 
-async function findUserByEmail(userPoolId: string, email: string) {
+const createUserAttributes = (entries: StringMap): AttributeType[] =>
+    Object.entries(entries)
+        .map((entry) => {
+            return {
+                Name: entry[0],
+                Value: entry[1]
+            }
+        })
+        .filter(attribute => !attribute.Name.startsWith("cognito:"))
+
+const findUserByEmail = async (userPoolId: string, email: string) => {
     try {
         const response = await cognito.send(
             new ListUsersCommand({
@@ -98,7 +101,7 @@ async function findUserByEmail(userPoolId: string, email: string) {
         console.error("Error finding user by email:", err);
         throw err;
     }
-}
+};
 
 const linkAccounts = async (
     sourceUserId: string,
