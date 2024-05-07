@@ -52,7 +52,9 @@ export const handler: PreSignUpTriggerHandler = async event => {
             );
         } else {
             //1. create a native cognito account
-            const createdCognitoUser = await adminCreateUser(userPoolId, email, createUserAttributes(providerName, event.request.userAttributes));
+            const userAttributes = createUserAttributes(providerName, event.request.userAttributes)
+            console.log(JSON.stringify(userAttributes))
+            const createdCognitoUser = await adminCreateUser(userPoolId, email, userAttributes);
 
             //2. change the password, to change status from FORCE_CHANGE_PASSWORD to CONFIRMED
             await adminSetUserPassword(userPoolId, email);
@@ -80,7 +82,7 @@ const createUserAttributes = (providerName: string, attributes: StringMap): Attr
             Value: entry[1]
         }))
         .filter(attribute => !attribute.Name.startsWith("cognito:"))
-        .concat(providerName == "Facebook" ?
+        .concat(providerName === "Facebook" ?
             [{
                 Name: "email_verified",
                 Value: "true"
@@ -134,14 +136,14 @@ const linkAccounts = async (
     }
 };
 
-const adminCreateUser = async (userPoolId: string, email: string, attributes: AttributeType[]) => {
+const adminCreateUser = async (userPoolId: string, username: string, userAttributes: AttributeType[]) => {
     return cognito.send(new AdminCreateUserCommand({
         UserPoolId: userPoolId,
         // SUPPRESS prevents sending an email with the temporary password
         // to the user on account creation
         MessageAction: "SUPPRESS",
-        Username: email,
-        UserAttributes: attributes,
+        Username: username,
+        UserAttributes: userAttributes,
     }))
 };
 
