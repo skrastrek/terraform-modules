@@ -1,0 +1,16 @@
+{
+  "name": "cognito-link-federated-user",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.137",
+    "@types/node": "^20.12.7",
+    "@aws-sdk/client-cognito-identity-provider": "^3.567.0",
+    "esbuild": "^0.20.2"
+  },
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js"
+  }
+}
