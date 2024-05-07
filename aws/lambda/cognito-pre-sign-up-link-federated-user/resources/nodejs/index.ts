@@ -13,7 +13,7 @@ const cognito = new CognitoIdentityProviderClient()
 
 export const handler: PreSignUpTriggerHandler = async event => {
 
-    console.log(JSON.stringify(event))
+    console.log("Event:", JSON.stringify(event))
 
     const {
         triggerSource,
@@ -27,8 +27,6 @@ export const handler: PreSignUpTriggerHandler = async event => {
 
     // --> User has registered with Google/Facebook external providers
     if (triggerSource === "PreSignUp_ExternalProvider") {
-        // const email = event.request.userAttributes.email;
-
         const existingUser = await findUserByEmail(userPoolId, email);
         console.log("existingUser:", existingUser);
         // userName example: "Facebook_12324325436" or "Google_1237823478"
@@ -72,6 +70,7 @@ export const handler: PreSignUpTriggerHandler = async event => {
         event.response.autoConfirmUser = true;
         event.response.autoVerifyEmail = true;
     }
+    console.log("Result:", JSON.stringify(event))
     return event
 }
 
