@@ -27,8 +27,9 @@ data "aws_iam_policy_document" "cognito_user_pool" {
     effect  = "Allow"
     actions = [
       "cognito-idp:AdminCreateUser",
-      "cognito-idp:AdminSetUserPassword",
       "cognito-idp:AdminLinkProviderForUser",
+      "cognito-idp:AdminSetUserPassword",
+      "cognito-idp:AdminUpdateUserAttributes",
       "cognito-idp:ListUsers",
     ]
     resources = ["*"]
