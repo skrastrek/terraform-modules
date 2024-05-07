@@ -11,6 +11,9 @@ import {PreSignUpTriggerHandler} from "aws-lambda";
 const cognito = new CognitoIdentityProviderClient()
 
 export const handler: PreSignUpTriggerHandler = async event => {
+
+    console.log(JSON.stringify(event))
+
     const {
         triggerSource,
         userPoolId,
@@ -26,7 +29,7 @@ export const handler: PreSignUpTriggerHandler = async event => {
         // const email = event.request.userAttributes.email;
 
         const existingUser = await findUserByEmail(userPoolId, email);
-        console.log("existingUser: ", existingUser);
+        console.log("existingUser:", existingUser);
         // userName example: "Facebook_12324325436" or "Google_1237823478"
         const [providerNameValue, providerUserId] = userName.split("_");
 
