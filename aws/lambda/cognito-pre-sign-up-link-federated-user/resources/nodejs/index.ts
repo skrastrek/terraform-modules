@@ -1,7 +1,7 @@
 import {
     AdminCreateUserCommand,
     AdminLinkProviderForUserCommand,
-    AdminSetUserPasswordCommand, AdminUpdateUserAttributesCommand,
+    AdminSetUserPasswordCommand,
     AttributeType,
     CognitoIdentityProviderClient,
     ListUsersCommand,
@@ -11,13 +11,8 @@ import {StringMap} from "aws-lambda/trigger/cognito-user-pool-trigger/_common";
 
 const cognito = new CognitoIdentityProviderClient()
 
-const CLAIM_EMAIL = "email"
-const CLAIM_EMAIL_VERIFIED = "email_verified"
-
 export const handler: PreSignUpTriggerHandler = async event => {
-
     console.log("Event:", JSON.stringify(event))
-
     const {
         triggerSource,
         userPoolId,
@@ -53,9 +48,11 @@ export const handler: PreSignUpTriggerHandler = async event => {
             );
         } else {
             //1. create a native cognito account
-            const userAttributes = createUserAttributes(event.request.userAttributes)
-            console.log(JSON.stringify(userAttributes))
-            const createdCognitoUser = await createUser(userPoolId, email, userAttributes);
+            const createdCognitoUser = await createUser(
+                userPoolId,
+                email,
+                createUserAttributes(event.request.userAttributes)
+            );
 
             //2. change the password, to change status from FORCE_CHANGE_PASSWORD to CONFIRMED
             await setUserPassword(userPoolId, email);
@@ -69,11 +66,6 @@ export const handler: PreSignUpTriggerHandler = async event => {
                 providerName,
                 userPoolId
             );
-
-            // Facebook does not include email_verified claim, but the email can be trusted.
-            if (providerName === "Facebook") {
-                await verifyEmail(userPoolId, email);
-            }
         }
         event.response.autoConfirmUser = true;
         event.response.autoVerifyEmail = true;
@@ -111,19 +103,6 @@ const findUserByEmail = async (userPoolId: string, email: string) => {
         throw err;
     }
 };
-
-const verifyEmail = async (userPoolId: string, username: string) => {
-    return cognito.send(new AdminUpdateUserAttributesCommand({
-        UserPoolId: userPoolId,
-        Username: username,
-        UserAttributes: [
-            {
-                Name: CLAIM_EMAIL_VERIFIED,
-                Value: "true"
-            }
-        ]
-    }))
-}
 
 const linkAccounts = async (
     sourceUserId: string,

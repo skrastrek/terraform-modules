@@ -52,6 +52,19 @@ variable "jwt_cognito_token_use" {
   }
 }
 
+variable "logging_config" {
+  type = object({
+    log_format            = string
+    application_log_level = string
+    system_log_level      = string
+  })
+  default = {
+    log_format            = "JSON"
+    application_log_level = "INFO"
+    system_log_level      = "INFO"
+  }
+}
+
 variable "memory_size" {
   type = number
 }

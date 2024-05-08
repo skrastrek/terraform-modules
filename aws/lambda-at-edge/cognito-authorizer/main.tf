@@ -35,9 +35,9 @@ resource "aws_lambda_function" "this" {
   source_code_hash = data.archive_file.zip.output_base64sha256
 
   logging_config {
-    log_format            = "JSON"
-    application_log_level = "INFO"
-    system_log_level      = "DEBUG"
+    log_format            = var.logging_config.log_format
+    application_log_level = var.logging_config.application_log_level
+    system_log_level      = var.logging_config.system_log_level
   }
 }
 

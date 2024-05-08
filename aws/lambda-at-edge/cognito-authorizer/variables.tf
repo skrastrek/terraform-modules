@@ -39,6 +39,19 @@ variable "logout_redirect_path" {
   type = string
 }
 
+variable "logging_config" {
+  type = object({
+    log_format            = string
+    application_log_level = string
+    system_log_level      = string
+  })
+  default = {
+    log_format            = "JSON"
+    application_log_level = "INFO"
+    system_log_level      = "INFO"
+  }
+}
+
 variable "cookie_domain" {
   type = string
 }
