@@ -43,6 +43,8 @@ const jwtVerifier = JwtRsaVerifier.create([
 ]);
 
 export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContextV1> = async event => {
+    console.debug("Event:", JSON.stringify(event))
+
     const jwt = jwtExtractor.extractFromAuthorizerEventV1(event)
 
     if (jwt === undefined) {
@@ -76,6 +78,8 @@ export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContex
 };
 
 export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<AuthContextV2> = async event => {
+    console.debug("Event:", JSON.stringify(event))
+
     const jwt = jwtExtractor.extractFromAuthorizerEventV2(event)
 
     if (jwt === undefined) {

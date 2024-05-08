@@ -34,7 +34,7 @@ export class JwtExtractor {
             const jwtFromHeader = this.extractJwtFromHeaders(event.headers)
 
             if (jwtFromHeader !== undefined) {
-                console.log(`Found JWT from header: ${this.sources.headerName}.`)
+                console.debug(`Found JWT from header: ${this.sources.headerName}.`)
                 return jwtFromHeader
             }
         }
@@ -43,7 +43,7 @@ export class JwtExtractor {
             const jwtFromCookie = this.extractCookiesFromAuthorizerEventV1(event)
 
             if (jwtFromCookie !== undefined) {
-                console.log(`Found JWT from cookie: ${jwtFromCookie.name}.`)
+                console.debug(`Found JWT from cookie: ${jwtFromCookie.name}.`)
                 return jwtFromCookie.value
             }
         }
@@ -57,7 +57,7 @@ export class JwtExtractor {
             const jwtFromHeader = this.extractJwtFromHeaders(event.headers)
 
             if (jwtFromHeader !== undefined) {
-                console.log(`Found JWT from header: ${this.sources.headerName}.`)
+                console.debug(`Found JWT from header: ${this.sources.headerName}.`)
                 return jwtFromHeader
             }
         }
@@ -66,7 +66,7 @@ export class JwtExtractor {
             const jwtFromCookie = this.extractCookiesFromAuthorizerEventV2(event)
 
             if (jwtFromCookie !== undefined) {
-                console.log(`Found JWT from cookie: ${jwtFromCookie.name}.`)
+                console.debug(`Found JWT from cookie: ${jwtFromCookie.name}.`)
                 return jwtFromCookie.value
             }
         }
