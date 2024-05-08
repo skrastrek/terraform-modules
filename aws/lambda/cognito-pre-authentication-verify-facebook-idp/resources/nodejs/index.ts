@@ -2,13 +2,13 @@ import {
     AdminUpdateUserAttributesCommand,
     CognitoIdentityProviderClient,
 } from "@aws-sdk/client-cognito-identity-provider";
-import {PostConfirmationTriggerHandler} from "aws-lambda";
+import {PreAuthenticationTriggerHandler} from "aws-lambda";
 
 const cognito = new CognitoIdentityProviderClient()
 
 const CLAIM_EMAIL_VERIFIED = "email_verified"
 
-export const handler: PostConfirmationTriggerHandler = async event => {
+export const handler: PreAuthenticationTriggerHandler = async event => {
 
     console.log("Event:", JSON.stringify(event))
 
