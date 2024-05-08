@@ -54,9 +54,9 @@ variable "jwt_cognito_token_use" {
 
 variable "logging_config" {
   type = object({
-    log_format            = string
-    application_log_level = string
-    system_log_level      = string
+    log_format            = optional(string, "JSON")
+    application_log_level = optional(string, "INFO")
+    system_log_level      = optional(string, "INFO")
   })
   default = {
     log_format            = "JSON"

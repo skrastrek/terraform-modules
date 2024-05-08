@@ -13,9 +13,9 @@ variable "cloudwatch_logs_kms_key_id" {
 
 variable "logging_config" {
   type = object({
-    log_format            = string
-    application_log_level = string
-    system_log_level      = string
+    log_format            = optional(string, "JSON")
+    application_log_level = optional(string, "INFO")
+    system_log_level      = optional(string, "INFO")
   })
   default = {
     log_format            = "JSON"
