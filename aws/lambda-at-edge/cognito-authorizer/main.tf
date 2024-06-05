@@ -32,7 +32,7 @@ resource "aws_lambda_function" "this" {
 
   package_type     = title(data.archive_file.zip.type)
   filename         = data.archive_file.zip.output_path
-  source_code_hash = data.archive_file.zip.output_base64sha256
+  source_code_hash = "${data.archive_file.zip.output_base64sha256}-${sha256(aws_secretsmanager_secret_version.config.secret_string)}"
 
   logging_config {
     log_format            = var.logging_config.log_format
