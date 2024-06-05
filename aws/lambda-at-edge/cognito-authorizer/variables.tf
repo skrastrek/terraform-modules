@@ -31,11 +31,11 @@ variable "callback_path" {
   type = string
 }
 
-variable "logout_path" {
+variable "logout_uri" {
   type = string
 }
 
-variable "logout_redirect_path" {
+variable "logout_redirect_uri" {
   type = string
 }
 

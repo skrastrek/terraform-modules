@@ -21,8 +21,8 @@ resource "aws_secretsmanager_secret_version" "config" {
     sameSite          = var.cookie_same_site
     httpOnly          = var.cookie_http_only
     logoutConfiguration = {
-      logoutUri         = var.logout_path
-      logoutRedirectUri = var.logout_redirect_path
+      logoutUri         = var.logout_uri
+      logoutRedirectUri = var.logout_redirect_uri
     }
   })
 }
