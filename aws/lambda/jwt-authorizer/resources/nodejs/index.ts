@@ -83,7 +83,7 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
     const jwt = jwtExtractor.extractFromAuthorizerEventV2(event)
 
     if (jwt === undefined) {
-        return unauthorizedResult()
+        throw new Error("Unauthorized");
     }
 
     let verifiedJwt: JwtPayload
@@ -92,7 +92,7 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
         verifiedJwt = await jwtVerifier.verify(jwt);
     } catch (error) {
         console.error("Invalid JWT:", error.message)
-        return unauthorizedResult()
+        throw new Error("Unauthorized");
     }
 
     // Enrich context with user attributes from AWS Cognito
@@ -111,13 +111,6 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
 
     return simpleAuthorizerWithContextResult(verifiedJwt)
 };
-
-function unauthorizedResult(): APIGatewaySimpleAuthorizerWithContextResult<AuthContextV2> {
-    return {
-        isAuthorized: false,
-        context: undefined
-    }
-}
 
 function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewayAuthorizerWithContextResult<AuthContextV1> {
     return {
