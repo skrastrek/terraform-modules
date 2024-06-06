@@ -83,7 +83,7 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
     const jwt = jwtExtractor.extractFromAuthorizerEventV2(event)
 
     if (jwt === undefined) {
-        throw new Error("Unauthorized");
+        return unauthorizedResult()
     }
 
     let verifiedJwt: JwtPayload
