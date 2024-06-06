@@ -15,12 +15,12 @@ variable "logging_config" {
   type = object({
     log_format            = optional(string, "JSON")
     application_log_level = optional(string, "INFO")
-    system_log_level      = optional(string, "INFO")
+    system_log_level      = optional(string, "WARN")
   })
   default = {
     log_format            = "JSON"
     application_log_level = "INFO"
-    system_log_level      = "INFO"
+    system_log_level      = "WARN"
   }
 }
 
