@@ -1,5 +1,5 @@
-import {APIGatewayRequestAuthorizerEvent, APIGatewayRequestAuthorizerEventV2} from "aws-lambda";
-import {APIGatewayRequestAuthorizerEventHeaders} from "aws-lambda/trigger/api-gateway-authorizer";
+import {APIGatewayRequestAuthorizerEvent, APIGatewayRequestAuthorizerEventV2} from "aws-lambda"
+import {APIGatewayRequestAuthorizerEventHeaders} from "aws-lambda/trigger/api-gateway-authorizer"
 
 export interface JwtSources {
     headerName: string | undefined
@@ -10,7 +10,7 @@ export const getJwtSourcesFromEnv = (): JwtSources => {
     return {
         headerName: process.env.JWT_SOURCE_HEADER_NAME,
         cookieRegex: process.env.JWT_SOURCE_COOKIE_REGEX ? RegExp(process.env.JWT_SOURCE_COOKIE_REGEX) : undefined
-    };
+    }
 }
 
 export interface RequestCookie {
@@ -50,7 +50,7 @@ export class JwtExtractor {
 
         console.log(`Could not find any JWT from header ${this.sources.headerName} or cookie matching regex ${this.sources.cookieRegex.source}.`)
         return undefined
-    };
+    }
 
     extractFromAuthorizerEventV2 = (event: APIGatewayRequestAuthorizerEventV2): string | undefined => {
         if (this.sources.headerName !== undefined) {
@@ -73,16 +73,16 @@ export class JwtExtractor {
 
         console.log(`Could not find any JWT from header ${this.sources.headerName} or cookie matching regex ${this.sources.cookieRegex.source}.`)
         return undefined
-    };
+    }
 
     private extractJwtFromHeaders = (jwtHeaderName: string, headers: APIGatewayRequestAuthorizerEventHeaders): string | undefined =>
-        headers[jwtHeaderName]?.replace("Bearer ", "");
+        headers[jwtHeaderName]?.replace("Bearer ", "")
 
     private extractCookiesFromAuthorizerEventV1 = (event: APIGatewayRequestAuthorizerEvent): RequestCookie | undefined =>
-        this.extractJwtFromCookies(event.headers["cookie"]?.split("; ") ?? []);
+        this.extractJwtFromCookies(event.headers["cookie"]?.split(" ") ?? [])
 
     private extractCookiesFromAuthorizerEventV2 = (event: APIGatewayRequestAuthorizerEventV2): RequestCookie | undefined =>
-        this.extractJwtFromCookies(event.cookies ?? []);
+        this.extractJwtFromCookies(event.cookies ?? [])
 
     private extractJwtFromCookies = (cookies: string[]): RequestCookie | undefined =>
         cookies
@@ -93,5 +93,5 @@ export class JwtExtractor {
                     value: split[1]
                 }
             })
-            .find((cookie) => this.sources.cookieRegex.test(cookie.name));
+            .find((cookie) => this.sources.cookieRegex.test(cookie.name))
 }
