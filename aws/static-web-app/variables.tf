@@ -54,7 +54,7 @@ variable "s3_bucket_ordered_cache_behaviours" {
     allowed_methods = list(string)
     cached_methods  = list(string)
 
-    cache_policy_id            = string
+    cache_policy_id = string
 
     compress = bool
 

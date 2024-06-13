@@ -24,7 +24,7 @@ resource "aws_iam_role_policy" "cognito_user_pool" {
 
 data "aws_iam_policy_document" "cognito_user_pool" {
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "cognito-idp:AdminCreateUser",
       "cognito-idp:AdminLinkProviderForUser",
