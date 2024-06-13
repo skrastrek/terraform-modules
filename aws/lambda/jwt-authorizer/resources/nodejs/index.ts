@@ -1,20 +1,20 @@
-import {JwtRsaVerifier} from "aws-jwt-verify/jwt-rsa";
-import {JwtPayload} from "aws-jwt-verify/jwt-model";
+import {JwtRsaVerifier} from "aws-jwt-verify/jwt-rsa"
+import {JwtPayload} from "aws-jwt-verify/jwt-model"
 import {
     APIGatewayAuthorizerWithContextResult,
     APIGatewayRequestAuthorizerEvent,
     APIGatewayRequestAuthorizerWithContextHandler,
     APIGatewayRequestSimpleAuthorizerHandlerV2WithContext,
     APIGatewaySimpleAuthorizerWithContextResult
-} from "aws-lambda";
-import {validateCognitoJwtFields} from "aws-jwt-verify/cognito-verifier";
+} from "aws-lambda"
+import {validateCognitoJwtFields} from "aws-jwt-verify/cognito-verifier"
 import {
     CognitoIdentityProviderClient,
     GetUserCommand,
     GetUserCommandOutput
-} from "@aws-sdk/client-cognito-identity-provider";
-import {JwtExtractor} from "./jwt-extractor";
-import {Json} from "aws-jwt-verify/safe-json-parse";
+} from "@aws-sdk/client-cognito-identity-provider"
+import {JwtExtractor} from "./jwt-extractor"
+import {Json} from "aws-jwt-verify/safe-json-parse"
 
 type AuthContextV1 = { [key: string]: Primitive }
 type AuthContextV2 = { [key: string]: boolean | number | string | string[] | Json }
@@ -42,7 +42,7 @@ const jwtVerifier = JwtRsaVerifier.create([
                 groups: process.env.JWT_COGNITO_GROUP?.split(",") ?? null
             }),
     },
-]);
+])
 
 export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContextV1> = async event => {
     console.debug("Event:", JSON.stringify(event))
@@ -50,16 +50,16 @@ export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContex
     const jwt = jwtExtractor.extractFromAuthorizerEventV1(event)
 
     if (jwt === undefined) {
-        throw new Error("Unauthorized");
+        throw new Error("Unauthorized")
     }
 
     let verifiedJwt: JwtPayload
     try {
         // If the token is not valid, an error is thrown:
-        verifiedJwt = await jwtVerifier.verify(jwt);
+        verifiedJwt = await jwtVerifier.verify(jwt)
     } catch (error) {
         console.error("Invalid JWT:", error.message)
-        throw new Error("Unauthorized");
+        throw new Error("Unauthorized")
     }
 
     // Enrich context with user attributes from AWS Cognito
@@ -67,7 +67,7 @@ export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContex
         let userData: GetUserCommandOutput
         try {
             // Get user data from verified jwt:
-            userData = await getUserData(jwt);
+            userData = await getUserData(jwt)
         } catch (error) {
             console.error("Could not get user data:", error.message)
             return authorizerWithContextResult(event, verifiedJwt)
@@ -77,7 +77,7 @@ export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContex
     }
 
     return authorizerWithContextResult(event, verifiedJwt)
-};
+}
 
 export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<AuthContextV2> = async event => {
     console.debug("Event:", JSON.stringify(event))
@@ -85,16 +85,16 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
     const jwt = jwtExtractor.extractFromAuthorizerEventV2(event)
 
     if (jwt === undefined) {
-        throw new Error("Unauthorized");
+        throw new Error("Unauthorized")
     }
 
     let verifiedJwt: JwtPayload
     try {
         // If the token is not valid, an error is thrown:
-        verifiedJwt = await jwtVerifier.verify(jwt);
+        verifiedJwt = await jwtVerifier.verify(jwt)
     } catch (error) {
         console.error("Invalid JWT:", error.message)
-        throw new Error("Unauthorized");
+        throw new Error("Unauthorized")
     }
 
     // Enrich context with user attributes from AWS Cognito
@@ -102,7 +102,7 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
         let userData: GetUserCommandOutput
         try {
             // Get user data from verified jwt:
-            userData = await getUserData(jwt);
+            userData = await getUserData(jwt)
         } catch (error) {
             console.error("Could not get user data:", error.message)
             return simpleAuthorizerWithContextResult(verifiedJwt)
@@ -112,7 +112,7 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
     }
 
     return simpleAuthorizerWithContextResult(verifiedJwt)
-};
+}
 
 function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewayAuthorizerWithContextResult<AuthContextV1> {
     return {
@@ -156,13 +156,7 @@ function isAccessToken(jwt: JwtPayload): boolean {
 }
 
 function isIssuedByAwsCognito(iss?: string): boolean {
-    if (iss !== undefined) {
-        if (iss.startsWith("https://cognito-idp.") && iss.includes("amazonaws.com")) {
-            return true
-        }
-    }
-
-    return false
+    return iss !== undefined && iss.startsWith("https://cognito-idp.") && iss.includes("amazonaws.com")
 }
 
 function hasAwsCognitoUserAdminScope(scope?: string): boolean {
@@ -179,7 +173,7 @@ function validateTokenUse(value?: string): TokenUse | undefined {
     } else if (isTokenUse(value)) {
         return value
     } else {
-        throw new Error(`Invalid token use: ${value}`);
+        throw new Error(`Invalid token use: ${value}`)
     }
 }
 
