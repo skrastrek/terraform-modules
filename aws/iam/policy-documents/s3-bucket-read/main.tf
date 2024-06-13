@@ -16,7 +16,9 @@ data "aws_iam_policy_document" "this" {
 
     actions = [
       "s3:GetObject",
-      "s3:GetObjectVersion"
+      "s3:GetObjectVersion",
+      "s3:ListBucket",
+      "s3:ListBucketVersions"
     ]
     resources = ["${var.s3_bucket_arn}/*"]
   }
