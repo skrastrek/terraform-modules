@@ -22,6 +22,8 @@ type AuthContextV2 = { [key: string]: boolean | number | string | string[] | Jso
 type Primitive = boolean | number | string
 type PrimitiveValues = { [key: string]: Primitive }
 
+type TokenUse = "id" | "access"
+
 type UserAttributes = { [key: string]: string }
 
 const cognitoIdentityProviderClient = new CognitoIdentityProviderClient()
@@ -171,19 +173,20 @@ function userAttributes(userData?: GetUserCommandOutput): UserAttributes {
     return userData?.UserAttributes?.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {}) ?? {}
 }
 
-function validateTokenUse(value?: string) {
-    if (isTokenUse(value)) {
+function validateTokenUse(value?: string): TokenUse | undefined {
+    if (value === undefined) {
+        return undefined
+    } else if (isTokenUse(value)) {
         return value
     } else {
         throw new Error(`Invalid token use: ${value}`);
     }
 }
 
-function isTokenUse(value?: string): value is "id" | "access" | undefined {
+function isTokenUse(value: string): value is TokenUse {
     switch (value) {
         case "id":
         case "access":
-        case undefined:
             return true
         default:
             return false
