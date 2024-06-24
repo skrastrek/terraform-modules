@@ -38,17 +38,6 @@ variable "access_log_retention_in_days" {
 
 variable "access_log_format" {
   type = string
-  default = jsonencode({
-    "ip" : "$context.identity.sourceIp"
-    "requestId" : "$context.requestId"
-    "requestTime" : "$context.requestTime"
-    "requestProtocol" : "$context.protocol"
-    "requestMethod" : "$context.httpMethod"
-    "requestPath" : "$context.path"
-    "responseStatus" : "$context.status"
-    "responseLatency" : "$context.responseLatency"
-    "responseLength" : "$context.responseLength"
-  })
 }
 
 variable "logging_level" {
