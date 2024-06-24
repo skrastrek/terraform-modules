@@ -37,7 +37,8 @@ variable "access_log_retention_in_days" {
 }
 
 variable "access_log_format" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "logging_level" {
