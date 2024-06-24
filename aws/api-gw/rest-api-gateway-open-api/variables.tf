@@ -21,12 +21,27 @@ variable "vpc_endpoint_ids" {
   description = "VPC endpoints for private API gateway"
 }
 
-variable "access_logs_retention_in_days" {
+variable "access_log_retention_in_days" {
   type    = number
   default = 180
 }
 
-variable "execution_logs_retention_in_days" {
+variable "access_log_format" {
+  type = string
+  default = jsonencode({
+    "ip" : "$context.identity.sourceIp"
+    "requestId" : "$context.requestId"
+    "requestTime" : "$context.requestTime"
+    "requestProtocol" : "$context.protocol"
+    "requestMethod" : "$context.httpMethod"
+    "requestPath" : "$context.resourcePath"
+    "responseStatus" : "$context.status"
+    "responseLatency" : "$context.responseLatency"
+    "responseLength" : "$context.responseLength"
+  })
+}
+
+variable "execution_log_retention_in_days" {
   type    = number
   default = 180
 }
