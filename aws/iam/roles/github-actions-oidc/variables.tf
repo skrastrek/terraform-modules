@@ -21,10 +21,7 @@ variable "github_actions_iam_oidc_provider_arn" {
 }
 
 variable "github_repositories" {
-  type = list(object({
-    organization = string
-    repository   = string
-  }))
+  type = list(string)
 }
 
 variable "tags" {
