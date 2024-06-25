@@ -15,10 +15,6 @@ data "aws_cloudfront_origin_request_policy" "all_viewer" {
   id = "216adef6-5c7f-47e4-b989-5492eafa07d3"
 }
 
-data "aws_cloudfront_origin_request_policy" "cors_s3_origin" {
-  id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
-}
-
 data "aws_cloudfront_response_headers_policy" "security_headers" {
   id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
 }
@@ -109,9 +105,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       viewer_protocol_policy = ordered_cache_behavior.value.viewer_protocol_policy
 
-      cache_policy_id            = ordered_cache_behavior.value.cache_policy_id
-      origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.cors_s3_origin.id
-      response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
+      cache_policy_id = ordered_cache_behavior.value.cache_policy_id
 
       dynamic "lambda_function_association" {
         for_each = (ordered_cache_behavior.value.lambda_function_association != null ?
@@ -136,9 +130,7 @@ resource "aws_cloudfront_distribution" "this" {
 
     viewer_protocol_policy = "redirect-to-https"
 
-    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_optimized.id
-    origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.cors_s3_origin.id
-    response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
+    cache_policy_id = data.aws_cloudfront_cache_policy.caching_optimized.id
 
     dynamic "lambda_function_association" {
       for_each = var.auth_default_cache_behaviour != null ? [var.auth_default_cache_behaviour] : []
