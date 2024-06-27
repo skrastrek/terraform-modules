@@ -15,12 +15,13 @@ variable "protocol_type" {
 variable "cors_configuration" {
   type = object({
     allow_credentials = optional(bool)
-    allow_headers     = optional(set(string))
-    allow_methods     = optional(set(string))
-    allow_origins     = optional(set(string))
-    expose_headers    = optional(set(string))
-    max_age           = optional(number)
+    allow_headers = optional(set(string))
+    allow_methods = optional(set(string))
+    allow_origins = optional(set(string))
+    expose_headers = optional(set(string))
+    max_age = optional(number)
   })
+  default = null
 }
 
 variable "open_api_template" {
