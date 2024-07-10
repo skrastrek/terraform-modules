@@ -157,5 +157,7 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
+  web_acl_id = var.web_acl_arn
+
   tags = var.tags
 }

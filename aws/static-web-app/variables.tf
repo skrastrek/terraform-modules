@@ -72,6 +72,11 @@ variable "s3_bucket_ordered_cache_behaviours" {
   default = []
 }
 
+variable "web_acl_arn" {
+  type    = string
+  default = null
+}
+
 variable "tags" {
   type = map(string)
 }
