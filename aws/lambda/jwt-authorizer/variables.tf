@@ -2,11 +2,11 @@ variable "name" {
   type = string
 }
 
-variable "cloudwatch_logs_retention_in_days" {
+variable "cloudwatch_log_group_retention_in_days" {
   type = number
 }
 
-variable "cloudwatch_logs_kms_key_id" {
+variable "cloudwatch_log_group_kms_key_id" {
   type    = string
   default = null
 }
