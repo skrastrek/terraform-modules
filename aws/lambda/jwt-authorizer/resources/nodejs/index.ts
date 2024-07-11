@@ -11,7 +11,11 @@ import {validateCognitoJwtFields} from "aws-jwt-verify/cognito-verifier"
 import {
     CognitoIdentityProviderClient,
     GetUserCommand,
-    GetUserCommandOutput
+    GetUserCommandOutput,
+    NotAuthorizedException,
+    PasswordResetRequiredException,
+    UserNotConfirmedException,
+    UserNotFoundException
 } from "@aws-sdk/client-cognito-identity-provider"
 import {JwtExtractor} from "./jwt-extractor"
 import {Json} from "aws-jwt-verify/safe-json-parse"
@@ -64,16 +68,7 @@ export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContex
 
     // Enrich context with user attributes from AWS Cognito
     if (canContextBeEnrichedWithAwsCognitoUserAttributes(verifiedJwt)) {
-        let userData: GetUserCommandOutput
-        try {
-            // Get user data from verified jwt:
-            userData = await getUserData(jwt)
-        } catch (error) {
-            console.error("Could not get user data:", error.message)
-            return authorizerWithContextResult(event, verifiedJwt)
-        }
-
-        return authorizerWithContextResult(event, verifiedJwt, userData)
+        return authorizerWithContextResult(event, verifiedJwt, await getUserData(jwt))
     }
 
     return authorizerWithContextResult(event, verifiedJwt)
@@ -99,16 +94,7 @@ export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<Au
 
     // Enrich context with user attributes from AWS Cognito
     if (canContextBeEnrichedWithAwsCognitoUserAttributes(verifiedJwt)) {
-        let userData: GetUserCommandOutput
-        try {
-            // Get user data from verified jwt:
-            userData = await getUserData(jwt)
-        } catch (error) {
-            console.error("Could not get user data:", error.message)
-            return simpleAuthorizerWithContextResult(verifiedJwt)
-        }
-
-        return simpleAuthorizerWithContextResult(verifiedJwt, userData)
+        return simpleAuthorizerWithContextResult(verifiedJwt, await getUserData(jwt))
     }
 
     return simpleAuthorizerWithContextResult(verifiedJwt)
@@ -205,10 +191,23 @@ function isPrimitive(value?: any): value is Primitive {
     }
 }
 
-function getUserData(accessToken: string): Promise<GetUserCommandOutput> {
-    return cognitoIdentityProviderClient.send(
-        new GetUserCommand({
-            AccessToken: accessToken
-        })
-    )
+async function getUserData(accessToken: string): Promise<GetUserCommandOutput> {
+    try {
+        return await cognitoIdentityProviderClient.send(
+            new GetUserCommand({
+                AccessToken: accessToken
+            })
+        );
+    } catch (error) {
+        console.error("Could not get user data:", error.message)
+        switch (error.constructor) {
+            case NotAuthorizedException:
+            case PasswordResetRequiredException:
+            case UserNotConfirmedException:
+            case UserNotFoundException:
+                throw new Error("Unauthorized")
+            default:
+                throw error
+        }
+    }
 }
