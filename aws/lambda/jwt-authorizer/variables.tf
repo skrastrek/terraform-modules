@@ -2,6 +2,11 @@ variable "name" {
   type = string
 }
 
+variable "description" {
+  type    = string
+  default = null
+}
+
 variable "cloudwatch_log_group_retention_in_days" {
   type = number
 }

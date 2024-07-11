@@ -21,7 +21,9 @@ data "archive_file" "zip" {
 
 resource "aws_lambda_function" "this" {
   function_name = var.name
-  role          = aws_iam_role.this.arn
+  description   = var.description
+
+  role = aws_iam_role.this.arn
 
   publish = true
 
