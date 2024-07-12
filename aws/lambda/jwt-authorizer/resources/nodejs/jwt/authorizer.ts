@@ -26,16 +26,16 @@ export abstract class JwtAuthorizer<E, R, Attributes> {
             throw new Error("Unauthorized")
         }
 
-        let verifiedJwt: JwtPayload
+        let verifiedJwtPayload: JwtPayload
         try {
             // If the token is not valid, an error is thrown:
-            verifiedJwt = await this.verifier.verify(jwt)
+            verifiedJwtPayload = await this.verifier.verify(jwt)
         } catch (error) {
             console.error("Invalid JWT:", error.message)
             throw new Error("Unauthorized")
         }
 
-        return this.result(event, verifiedJwt, await this.enricher.enrich(verifiedJwt))
+        return this.result(event, verifiedJwtPayload, await this.enricher.enrich(jwt, verifiedJwtPayload))
     };
 }
 

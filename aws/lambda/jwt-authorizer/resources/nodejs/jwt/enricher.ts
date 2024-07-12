@@ -11,7 +11,7 @@ import {
 import {UserAttributes} from "../types";
 
 export interface JwtEnricher<E> {
-    enrich(jwt: JwtPayload): Promise<E | undefined>
+    enrich(jwt: string, jwtPayload: JwtPayload): Promise<E | undefined>
 }
 
 export class CognitoJwtEnricher implements JwtEnricher<UserAttributes> {
@@ -19,9 +19,9 @@ export class CognitoJwtEnricher implements JwtEnricher<UserAttributes> {
     constructor(private cognitoClient: CognitoIdentityProviderClient) {
     }
 
-    enrich = async (jwt: JwtPayload): Promise<UserAttributes | undefined> => {
-        if (canContextBeEnrichedWithAwsCognitoUserAttributes(jwt)) {
-            return userAttributes(await this.getUserData(JSON.stringify(jwt)))
+    enrich = async (jwt: string, jwtPayload: JwtPayload): Promise<UserAttributes | undefined> => {
+        if (canContextBeEnrichedWithAwsCognitoUserAttributes(jwtPayload)) {
+            return userAttributes(await this.getUserData(jwt))
         }
     };
 
