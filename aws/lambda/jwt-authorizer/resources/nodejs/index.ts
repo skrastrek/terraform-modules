@@ -1,38 +1,18 @@
 import {JwtRsaVerifier} from "aws-jwt-verify/jwt-rsa"
-import {JwtPayload} from "aws-jwt-verify/jwt-model"
 import {
-    APIGatewayAuthorizerWithContextResult,
-    APIGatewayRequestAuthorizerEvent,
     APIGatewayRequestAuthorizerWithContextHandler,
-    APIGatewayRequestSimpleAuthorizerHandlerV2WithContext,
-    APIGatewaySimpleAuthorizerWithContextResult
+    APIGatewayRequestSimpleAuthorizerHandlerV2WithContext
 } from "aws-lambda"
 import {validateCognitoJwtFields} from "aws-jwt-verify/cognito-verifier"
 import {
-    CognitoIdentityProviderClient,
-    GetUserCommand,
-    GetUserCommandOutput,
-    NotAuthorizedException,
-    PasswordResetRequiredException,
-    UserNotConfirmedException,
-    UserNotFoundException
+    CognitoIdentityProviderClient
 } from "@aws-sdk/client-cognito-identity-provider"
-import {JwtExtractor} from "./jwt-extractor"
-import {Json} from "aws-jwt-verify/safe-json-parse"
+import {AuthContextV1, AuthContextV2, TokenUse} from "./types";
+import {getJwtSourcesFromEnv} from "./jwt/sources";
+import {CognitoJwtEnricher} from "./jwt/enricher";
+import {ApiGatewayV1JwtAuthorizer, ApiGatewayV2JwtAuthorizer} from "./jwt/authorizer";
 
-type AuthContextV1 = { [key: string]: Primitive }
-type AuthContextV2 = { [key: string]: boolean | number | string | string[] | Json }
-
-type Primitive = boolean | number | string
-type PrimitiveValues = { [key: string]: Primitive }
-
-type TokenUse = "id" | "access"
-
-type UserAttributes = { [key: string]: string }
-
-const cognitoIdentityProviderClient = new CognitoIdentityProviderClient()
-
-const jwtExtractor = JwtExtractor.createFromEnv()
+const jwtSources = getJwtSourcesFromEnv()
 
 const jwtVerifier = JwtRsaVerifier.create([
     {
@@ -48,109 +28,19 @@ const jwtVerifier = JwtRsaVerifier.create([
     },
 ])
 
+const cognitoJwtEnricher = new CognitoJwtEnricher(new CognitoIdentityProviderClient())
+
+const apiGatewayV1JwtAuthorizer = new ApiGatewayV1JwtAuthorizer(jwtSources, jwtVerifier, cognitoJwtEnricher)
+const apiGatewayV2JwtAuthorizer = new ApiGatewayV2JwtAuthorizer(jwtSources, jwtVerifier, cognitoJwtEnricher)
+
 export const handlerV1: APIGatewayRequestAuthorizerWithContextHandler<AuthContextV1> = async event => {
     console.debug("Event:", JSON.stringify(event))
-
-    const jwt = jwtExtractor.extractFromAuthorizerEventV1(event)
-
-    if (jwt === undefined) {
-        throw new Error("Unauthorized")
-    }
-
-    let verifiedJwt: JwtPayload
-    try {
-        // If the token is not valid, an error is thrown:
-        verifiedJwt = await jwtVerifier.verify(jwt)
-    } catch (error) {
-        console.error("Invalid JWT:", error.message)
-        throw new Error("Unauthorized")
-    }
-
-    // Enrich context with user attributes from AWS Cognito
-    if (canContextBeEnrichedWithAwsCognitoUserAttributes(verifiedJwt)) {
-        return authorizerWithContextResult(event, verifiedJwt, await getUserData(jwt))
-    }
-
-    return authorizerWithContextResult(event, verifiedJwt)
+    return apiGatewayV1JwtAuthorizer.authorize(event)
 }
 
 export const handlerV2: APIGatewayRequestSimpleAuthorizerHandlerV2WithContext<AuthContextV2> = async event => {
     console.debug("Event:", JSON.stringify(event))
-
-    const jwt = jwtExtractor.extractFromAuthorizerEventV2(event)
-
-    if (jwt === undefined) {
-        throw new Error("Unauthorized")
-    }
-
-    let verifiedJwt: JwtPayload
-    try {
-        // If the token is not valid, an error is thrown:
-        verifiedJwt = await jwtVerifier.verify(jwt)
-    } catch (error) {
-        console.error("Invalid JWT:", error.message)
-        throw new Error("Unauthorized")
-    }
-
-    // Enrich context with user attributes from AWS Cognito
-    if (canContextBeEnrichedWithAwsCognitoUserAttributes(verifiedJwt)) {
-        return simpleAuthorizerWithContextResult(verifiedJwt, await getUserData(jwt))
-    }
-
-    return simpleAuthorizerWithContextResult(verifiedJwt)
-}
-
-function authorizerWithContextResult(event: APIGatewayRequestAuthorizerEvent, jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewayAuthorizerWithContextResult<AuthContextV1> {
-    return {
-        principalId: jwt.sub,
-        policyDocument: {
-            Version: "2012-10-17",
-            Statement: [
-                {
-                    Action: "execute-api:Invoke",
-                    Effect: "Allow",
-                    Resource: event.methodArn
-                }
-            ]
-        },
-        context: {
-            ...primitiveValues(jwt),
-            ...userAttributes(userData)
-        },
-        usageIdentifierKey: jwt.sub
-    }
-}
-
-function simpleAuthorizerWithContextResult(jwt: JwtPayload, userData?: GetUserCommandOutput): APIGatewaySimpleAuthorizerWithContextResult<AuthContextV2> {
-    return {
-        isAuthorized: true,
-        context: {
-            ...jwt,
-            ...userAttributes(userData)
-        }
-    }
-}
-
-function canContextBeEnrichedWithAwsCognitoUserAttributes(jwt: JwtPayload): boolean {
-    return isAccessToken(jwt)
-        && hasAwsCognitoUserAdminScope(jwt.scope)
-        && isIssuedByAwsCognito(jwt.iss)
-}
-
-function isAccessToken(jwt: JwtPayload): boolean {
-    return jwt.token_use === "access"
-}
-
-function isIssuedByAwsCognito(iss?: string): boolean {
-    return iss !== undefined && iss.startsWith("https://cognito-idp.") && iss.includes("amazonaws.com")
-}
-
-function hasAwsCognitoUserAdminScope(scope?: string): boolean {
-    return scope?.includes("aws.cognito.signin.user.admin")
-}
-
-function userAttributes(userData?: GetUserCommandOutput): UserAttributes {
-    return userData?.UserAttributes?.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {}) ?? {}
+    return apiGatewayV2JwtAuthorizer.authorize(event)
 }
 
 function validateTokenUse(value?: string): TokenUse | undefined {
@@ -170,44 +60,5 @@ function isTokenUse(value: string): value is TokenUse {
             return true
         default:
             return false
-    }
-}
-
-function primitiveValues(object: any): PrimitiveValues {
-    return Object.entries(object)
-        .filter<[string, Primitive]>((entry): entry is [string, Primitive] => isPrimitive(entry[1]))
-        .reduce((result, curr) => ({...result, [curr[0]]: curr[1]}), {})
-}
-
-function isPrimitive(value?: any): value is Primitive {
-    switch (typeof value) {
-        case "boolean":
-        case "string":
-        case "number":
-            return true
-
-        default:
-            return false
-    }
-}
-
-async function getUserData(accessToken: string): Promise<GetUserCommandOutput> {
-    try {
-        return await cognitoIdentityProviderClient.send(
-            new GetUserCommand({
-                AccessToken: accessToken
-            })
-        );
-    } catch (error) {
-        console.error("Could not get user data:", error.message)
-        switch (error.constructor) {
-            case NotAuthorizedException:
-            case PasswordResetRequiredException:
-            case UserNotConfirmedException:
-            case UserNotFoundException:
-                throw new Error("Unauthorized")
-            default:
-                throw error
-        }
     }
 }
