@@ -49,8 +49,14 @@ data "aws_iam_policy_document" "bucket" {
       type        = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
     }
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.this.arn}/*"]
+    actions = [
+      "s3:GetObject",
+      "s3:ListBucket",
+    ]
+    resources = [
+      aws_s3_bucket.this.arn,
+      "${aws_s3_bucket.this.arn}/*",
+    ]
 
     condition {
       test     = "StringEquals"
