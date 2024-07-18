@@ -82,6 +82,14 @@ variable "custom_ordered_cache_behaviours" {
 
     viewer_protocol_policy = string
 
+    function_association = optional(
+      object({
+        event_type   = string
+        function_arn = string
+      }),
+      null
+    )
+
     lambda_function_association = optional(
       object({
         lambda_arn   = string
@@ -106,6 +114,14 @@ variable "s3_bucket_ordered_cache_behaviours" {
     compress = optional(bool, false)
 
     viewer_protocol_policy = string
+
+    function_association = optional(
+      object({
+        event_type   = string
+        function_arn = string
+      }),
+      null
+    )
 
     lambda_function_association = optional(
       object({
