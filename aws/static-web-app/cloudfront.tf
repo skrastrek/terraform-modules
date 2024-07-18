@@ -144,7 +144,7 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = var.custom_ordered_cache_behaviours
     content {
       path_pattern     = ordered_cache_behavior.value.path_pattern
-      target_origin_id = ordered_cache_behavior.value.origin_id
+      target_origin_id = ordered_cache_behavior.value.target_origin_id
 
       allowed_methods = ordered_cache_behavior.value.allowed_methods
       cached_methods  = ordered_cache_behavior.value.cached_methods
