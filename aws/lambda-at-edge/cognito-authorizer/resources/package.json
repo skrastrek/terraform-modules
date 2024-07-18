@@ -13,6 +13,6 @@
   },
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "nodejs/node_modules/.bin/esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js"
+    "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js"
   }
 }
