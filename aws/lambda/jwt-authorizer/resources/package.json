@@ -12,7 +12,7 @@
     "esbuild": "^0.23.0"
   },
   "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js"
+    "prebuild": "rm -rf nodejs/dist",
+    "build": "nodejs/node_modules/.bin/esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js"
   }
 }

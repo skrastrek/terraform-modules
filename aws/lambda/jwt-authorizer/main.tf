@@ -1,7 +1,7 @@
 data "aws_region" "current" {}
 
 locals {
-  node_project_path = "${path.module}/resources/nodejs"
+  resources_path = "${path.module}/resources"
 }
 
 data "external" "npm_build" {
@@ -10,13 +10,13 @@ data "external" "npm_build" {
 (npm ci && npm run build) >&2 && echo "{\"filename\": \"index.js\"}"
 EOT
   ]
-  working_dir = local.node_project_path
+  working_dir = local.resources_path
 }
 
 data "archive_file" "zip" {
   type        = "zip"
-  source_file = "${local.node_project_path}/dist/${data.external.npm_build.result.filename}"
-  output_path = "${local.node_project_path}/dist/lambda.zip"
+  source_file = "${local.resources_path}/dist/${data.external.npm_build.result.filename}"
+  output_path = "${local.resources_path}/dist/lambda.zip"
 }
 
 resource "aws_lambda_function" "this" {
