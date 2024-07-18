@@ -153,7 +153,9 @@ resource "aws_cloudfront_distribution" "this" {
 
       viewer_protocol_policy = ordered_cache_behavior.value.viewer_protocol_policy
 
-      cache_policy_id = ordered_cache_behavior.value.cache_policy_id
+      cache_policy_id            = ordered_cache_behavior.value.cache_policy_id
+      origin_request_policy_id   = ordered_cache_behavior.value.origin_request_policy_id
+      response_headers_policy_id = ordered_cache_behavior.value.response_headers_policy_id
 
       dynamic "lambda_function_association" {
         for_each = (ordered_cache_behavior.value.lambda_function_association != null ?
