@@ -47,6 +47,51 @@ variable "auth_ordered_cache_behaviours" {
   default = []
 }
 
+variable "custom_origins" {
+  type = list(object({
+    origin_id           = string
+    origin_path         = optional(string, null)
+    domain_name         = string
+    connection_attempts = optional(number, null)
+    connection_timeout  = optional(number, null)
+    custom_origin_config = object({
+      http_port                = number
+      https_port               = number
+      origin_protocol_policy   = string
+      origin_ssl_protocols     = list(string)
+      origin_keepalive_timeout = optional(number, null)
+      origin_read_timeout      = optional(number, null)
+    })
+  }))
+  default = []
+}
+
+variable "custom_ordered_cache_behaviours" {
+  type = list(object({
+    path_pattern     = string
+    target_origin_id = string
+
+    allowed_methods = list(string)
+    cached_methods  = list(string)
+
+    cache_policy_id = optional(string, null)
+
+    compress = optional(bool, false)
+
+    viewer_protocol_policy = string
+
+    lambda_function_association = optional(
+      object({
+        lambda_arn   = string
+        event_type   = optional(string, "viewer-request")
+        include_body = optional(bool, false)
+      }),
+      null
+    )
+  }))
+  default = []
+}
+
 variable "s3_bucket_ordered_cache_behaviours" {
   type = list(object({
     path_pattern = string
@@ -54,9 +99,9 @@ variable "s3_bucket_ordered_cache_behaviours" {
     allowed_methods = list(string)
     cached_methods  = list(string)
 
-    cache_policy_id = string
+    cache_policy_id = optional(string, null)
 
-    compress = bool
+    compress = optional(bool, false)
 
     viewer_protocol_policy = string
 

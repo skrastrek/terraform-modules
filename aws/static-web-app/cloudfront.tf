@@ -67,6 +67,26 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
+  dynamic "origin" {
+    for_each = var.custom_origins
+    content {
+      domain_name = origin.value.domain_name
+      origin_id   = origin.value.origin_id
+
+      connection_attempts = origin.value.connection_attempts
+      connection_timeout  = origin.value.connection_timeout
+
+      custom_origin_config {
+        http_port                = origin.value.custom_origin_config.http_port
+        https_port               = origin.value.custom_origin_config.https_port
+        origin_protocol_policy   = origin.value.custom_origin_config.origin_protocol_policy
+        origin_ssl_protocols     = origin.value.custom_origin_config.origin_ssl_protocols
+        origin_keepalive_timeout = origin.value.custom_origin_config.origin_keepalive_timeout
+        origin_read_timeout      = origin.value.custom_origin_config.origin_read_timeout
+      }
+    }
+  }
+
   dynamic "ordered_cache_behavior" {
     for_each = var.auth_ordered_cache_behaviours
     content {
@@ -97,6 +117,34 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       path_pattern     = ordered_cache_behavior.value.path_pattern
       target_origin_id = local.s3_bucket_origin_id
+
+      allowed_methods = ordered_cache_behavior.value.allowed_methods
+      cached_methods  = ordered_cache_behavior.value.cached_methods
+
+      compress = ordered_cache_behavior.value.compress
+
+      viewer_protocol_policy = ordered_cache_behavior.value.viewer_protocol_policy
+
+      cache_policy_id = ordered_cache_behavior.value.cache_policy_id
+
+      dynamic "lambda_function_association" {
+        for_each = (ordered_cache_behavior.value.lambda_function_association != null ?
+          [ordered_cache_behavior.value.lambda_function_association]
+        : [])
+        content {
+          event_type   = lambda_function_association.value.event_type
+          lambda_arn   = lambda_function_association.value.lambda_arn
+          include_body = lambda_function_association.value.include_body
+        }
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.custom_ordered_cache_behaviours
+    content {
+      path_pattern     = ordered_cache_behavior.value.path_pattern
+      target_origin_id = ordered_cache_behavior.value.origin_id
 
       allowed_methods = ordered_cache_behavior.value.allowed_methods
       cached_methods  = ordered_cache_behavior.value.cached_methods
