@@ -82,21 +82,25 @@ variable "custom_ordered_cache_behaviours" {
 
     viewer_protocol_policy = string
 
-    function_association = optional(
-      object({
-        event_type   = string
-        function_arn = string
-      }),
-      null
+    function_associations = optional(
+      list(
+        object({
+          event_type   = string
+          function_arn = string
+        })
+      ),
+      []
     )
 
-    lambda_function_association = optional(
-      object({
-        lambda_arn   = string
-        event_type   = optional(string, "viewer-request")
-        include_body = optional(bool, false)
-      }),
-      null
+    lambda_function_associations = optional(
+      list(
+        object({
+          lambda_arn   = string
+          event_type   = optional(string, "viewer-request")
+          include_body = optional(bool, false)
+        }),
+      ),
+      []
     )
   }))
   default = []
@@ -115,21 +119,25 @@ variable "s3_bucket_ordered_cache_behaviours" {
 
     viewer_protocol_policy = string
 
-    function_association = optional(
-      object({
-        event_type   = string
-        function_arn = string
-      }),
-      null
+    function_associations = optional(
+      list(
+        object({
+          event_type   = string
+          function_arn = string
+        })
+      ),
+      []
     )
 
-    lambda_function_association = optional(
-      object({
-        lambda_arn   = string
-        event_type   = optional(string, "viewer-request")
-        include_body = optional(bool, false)
-      }),
-      null
+    lambda_function_associations = optional(
+      list(
+        object({
+          lambda_arn   = string
+          event_type   = optional(string, "viewer-request")
+          include_body = optional(bool, false)
+        }),
+      ),
+      []
     )
   }))
   default = []

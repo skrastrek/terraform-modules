@@ -128,8 +128,7 @@ resource "aws_cloudfront_distribution" "this" {
       cache_policy_id = ordered_cache_behavior.value.cache_policy_id
 
       dynamic "function_association" {
-        for_each = (ordered_cache_behavior.value.function_association != null ?
-        [ordered_cache_behavior.value.function_association] : [])
+        for_each = ordered_cache_behavior.value.function_associations
 
         content {
           event_type   = function_association.value.event_type
@@ -138,9 +137,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "lambda_function_association" {
-        for_each = (ordered_cache_behavior.value.lambda_function_association != null ?
-          [ordered_cache_behavior.value.lambda_function_association]
-        : [])
+        for_each = ordered_cache_behavior.value.lambda_function_associations
         content {
           event_type   = lambda_function_association.value.event_type
           lambda_arn   = lambda_function_association.value.lambda_arn
@@ -168,8 +165,7 @@ resource "aws_cloudfront_distribution" "this" {
       response_headers_policy_id = ordered_cache_behavior.value.response_headers_policy_id
 
       dynamic "function_association" {
-        for_each = (ordered_cache_behavior.value.function_association != null ?
-        [ordered_cache_behavior.value.function_association] : [])
+        for_each = ordered_cache_behavior.value.function_associations
 
         content {
           event_type   = function_association.value.event_type
@@ -178,9 +174,17 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "lambda_function_association" {
-        for_each = (ordered_cache_behavior.value.lambda_function_association != null ?
-          [ordered_cache_behavior.value.lambda_function_association]
-        : [])
+        for_each = var.auth_default_cache_behaviour != null ? [var.auth_default_cache_behaviour] : []
+        content {
+          event_type   = lambda_function_association.value.event_type
+          lambda_arn   = lambda_function_association.value.lambda_arn
+          include_body = lambda_function_association.value.include_body
+        }
+      }
+
+
+      dynamic "lambda_function_association" {
+        for_each = ordered_cache_behavior.value.lambda_function_associations
         content {
           event_type   = lambda_function_association.value.event_type
           lambda_arn   = lambda_function_association.value.lambda_arn
