@@ -27,7 +27,9 @@ resource "aws_lambda_function" "this" {
 
   publish = true
 
-  runtime     = "nodejs20.x"
+  runtime       = "nodejs20.x"
+  architectures = ["arm64"]
+
   memory_size = var.memory_size
 
   handler = var.payload_format_version == "1.0" ? "index.handlerV1" : "index.handlerV2"
