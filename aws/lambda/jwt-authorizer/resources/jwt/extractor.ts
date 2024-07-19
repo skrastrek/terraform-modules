@@ -36,7 +36,7 @@ export class AuthorizerEventV1JwtExtractor implements JwtExtractor<APIGatewayReq
     }
 
     private extractJwtFromCookies = (event: APIGatewayRequestAuthorizerEvent): RequestCookie | undefined =>
-        findFirstCookieMatching(event.headers["cookie"]?.split(" ") ?? [], this.sources.cookieRegex)
+        findFirstCookieMatching(event.headers["cookie"]?.split("; ") ?? [], this.sources.cookieRegex)
 }
 
 export class AuthorizerEventV2JwtExtractor implements JwtExtractor<APIGatewayRequestAuthorizerEventV2> {
