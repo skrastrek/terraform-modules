@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "this" {
     condition {
       test     = "ForAnyValue:StringEquals"
       variable = "aws:CalledVia"
-      values = ["s3-object-lambda.amazonaws.com"]
+      values   = ["s3-object-lambda.amazonaws.com"]
     }
   }
 
@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "this" {
     condition {
       test     = "ForAnyValue:StringEquals"
       variable = "aws:CalledVia"
-      values = ["s3-object-lambda.amazonaws.com"]
+      values   = ["s3-object-lambda.amazonaws.com"]
     }
   }
 }
