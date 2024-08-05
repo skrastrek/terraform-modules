@@ -15,6 +15,12 @@ data "aws_iam_policy_document" "this" {
       "lambda:InvokeFunction"
     ]
     resources = [var.lambda_function_arn]
+
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "aws:CalledVia"
+      values = ["s3-object-lambda.amazonaws.com"]
+    }
   }
 
   statement {
@@ -23,6 +29,12 @@ data "aws_iam_policy_document" "this" {
     actions = [
       "s3:GetObject",
     ]
-    resources = [var.s3_access_point_arn]
+    resources = ["${var.s3_access_point_arn}/*"]
+
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "aws:CalledVia"
+      values = ["s3-object-lambda.amazonaws.com"]
+    }
   }
 }
