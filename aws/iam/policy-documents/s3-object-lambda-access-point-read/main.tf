@@ -3,7 +3,8 @@ data "aws_iam_policy_document" "this" {
     sid    = "AllowObjectLambdaAccess"
     effect = "Allow"
     actions = [
-      "s3-object-lambda:GetObject",
+      "s3-object-lambda:Get*",
+      "s3-object-lambda:List*"
     ]
     resources = [var.s3_object_lambda_access_point_arn]
   }
@@ -27,7 +28,8 @@ data "aws_iam_policy_document" "this" {
     sid    = "AllowStandardAccessPointAccess"
     effect = "Allow"
     actions = [
-      "s3:GetObject",
+      "s3:Get*",
+      "s3:List*"
     ]
     resources = ["${var.s3_access_point_arn}/*"]
 
