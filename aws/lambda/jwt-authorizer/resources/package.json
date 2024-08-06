@@ -13,6 +13,6 @@
   },
   "scripts": {
     "prebuild": "rm -rf nodejs/dist",
-    "build": "esbuild index.ts --bundle --minify --platform=node --target=node20 --outdir=dist",
+    "build": "esbuild index.ts --bundle --minify --platform=node --target=node20 --outdir=dist"
   }
 }
