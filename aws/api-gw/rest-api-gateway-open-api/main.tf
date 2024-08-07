@@ -56,7 +56,7 @@ resource "aws_api_gateway_stage" "this" {
       "requestTime" : "$context.requestTime"
       "requestProtocol" : "$context.protocol"
       "requestMethod" : "$context.httpMethod"
-      "requestPath" : "$context.resourcePath"
+      "requestPath" : "$context.path"
       "responseStatus" : "$context.status"
       "responseLatency" : "$context.responseLatency"
       "responseLength" : "$context.responseLength"
