@@ -7,15 +7,18 @@ import {
 } from "aws-lambda";
 import {APIGatewaySimpleAuthorizerWithContextResult} from "aws-lambda/trigger/api-gateway-authorizer";
 import {AuthContextV1, AuthContextV2, Primitive, PrimitiveValues, UserAttributes} from "../types";
-import {JwtSources} from "./sources";
 import {JwtEnricher} from "./enricher";
-import {AuthorizerEventV1JwtExtractor, AuthorizerEventV2JwtExtractor, JwtExtractor} from "./extractor";
+import {JwtExtractor} from "./extractor";
+import {JwtSources} from "./sources";
 
 export abstract class JwtAuthorizer<E, R, Attributes> {
 
-    abstract readonly extractor: JwtExtractor<E>
-    abstract readonly verifier: JwtRsaVerifier<any, any, any>
-    abstract readonly enricher: JwtEnricher<Attributes>
+    protected constructor(
+        private readonly extractor: JwtExtractor<E>,
+        private readonly verifier: JwtRsaVerifier<any, any, any>,
+        private readonly enricher: JwtEnricher<Attributes>,
+    ) {
+    }
 
     abstract result: (event: E, verifiedJwt: (JwtPayload), attributes?: Attributes) => R;
 
@@ -41,16 +44,12 @@ export abstract class JwtAuthorizer<E, R, Attributes> {
 
 export class ApiGatewayV1JwtAuthorizer extends JwtAuthorizer<APIGatewayRequestAuthorizerEvent, APIGatewayAuthorizerWithContextResult<AuthContextV1>, UserAttributes> {
     constructor(
-        private jwtSources: JwtSources,
-        private jwtVerifier: JwtRsaVerifier<any, any, any>,
-        private jwtEnricher: JwtEnricher<UserAttributes>,
+        jwtSources: JwtSources,
+        jwtVerifier: JwtRsaVerifier<any, any, any>,
+        jwtEnricher: JwtEnricher<UserAttributes>,
     ) {
-        super();
+        super(jwtSources.v1JwtExtractor(), jwtVerifier, jwtEnricher);
     }
-
-    extractor = new AuthorizerEventV1JwtExtractor(this.jwtSources)
-    verifier = this.jwtVerifier
-    enricher = this.jwtEnricher
 
     result = (event: APIGatewayRequestAuthorizerEvent, verifiedJwt: JwtPayload, attributes?: UserAttributes): APIGatewayAuthorizerWithContextResult<AuthContextV1> => ({
         principalId: verifiedJwt.sub!!,
@@ -74,16 +73,12 @@ export class ApiGatewayV1JwtAuthorizer extends JwtAuthorizer<APIGatewayRequestAu
 
 export class ApiGatewayV2JwtAuthorizer extends JwtAuthorizer<APIGatewayRequestAuthorizerEventV2, APIGatewaySimpleAuthorizerWithContextResult<AuthContextV2>, UserAttributes> {
     constructor(
-        private jwtSources: JwtSources,
-        private jwtVerifier: JwtRsaVerifier<any, any, any>,
-        private jwtEnricher: JwtEnricher<UserAttributes>,
+        jwtSources: JwtSources,
+        jwtVerifier: JwtRsaVerifier<any, any, any>,
+        jwtEnricher: JwtEnricher<UserAttributes>,
     ) {
-        super();
+        super(jwtSources.v2JwtExtractor(), jwtVerifier, jwtEnricher);
     }
-
-    extractor = new AuthorizerEventV2JwtExtractor(this.jwtSources)
-    verifier = this.jwtVerifier
-    enricher = this.jwtEnricher
 
     result = (event: APIGatewayRequestAuthorizerEventV2, verifiedJwt: JwtPayload, attributes?: UserAttributes): APIGatewaySimpleAuthorizerWithContextResult<AuthContextV2> => ({
         isAuthorized: true,
