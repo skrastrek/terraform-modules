@@ -58,7 +58,7 @@ function isAccessToken(jwt: JwtPayload): boolean {
 }
 
 function hasAwsCognitoUserAdminScope(scope?: string): boolean {
-    return scope?.includes("aws.cognito.signin.user.admin")
+    return scope?.includes("aws.cognito.signin.user.admin") ?? false
 }
 
 function isIssuedByAwsCognito(iss?: string): boolean {
@@ -66,5 +66,5 @@ function isIssuedByAwsCognito(iss?: string): boolean {
 }
 
 function userAttributes(userData: GetUserCommandOutput): UserAttributes {
-    return userData.UserAttributes?.reduce((result, curr) => ({...result, [curr.Name]: curr.Value}), {}) ?? {}
+    return userData.UserAttributes?.reduce((result, curr) => ({...result, [curr.Name!!]: curr.Value}), {}) ?? {}
 }

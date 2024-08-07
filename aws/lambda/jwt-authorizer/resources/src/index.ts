@@ -11,20 +11,24 @@ import {AuthContextV1, AuthContextV2, TokenUse} from "./types";
 import {getJwtSourcesFromEnv} from "./jwt/sources";
 import {CognitoJwtEnricher} from "./jwt/enricher";
 import {ApiGatewayV1JwtAuthorizer, ApiGatewayV2JwtAuthorizer} from "./jwt/authorizer";
+import {JwtPayload} from "aws-jwt-verify/jwt-model";
 
 const jwtSources = getJwtSourcesFromEnv()
 
 const jwtVerifier = JwtRsaVerifier.create([
     {
-        issuer: process.env.JWT_ISSUER,
+        issuer: process.env.JWT_ISSUER!!,
         audience: process.env.JWT_AUDIENCE?.split(",") ?? null,
         scope: process.env.JWT_SCOPE,
-        customJwtCheck: ({payload}) =>
-            validateCognitoJwtFields(payload, {
-                tokenUse: validateTokenUse(process.env.JWT_COGNITO_TOKEN_USE) ?? null,
-                clientId: process.env.JWT_COGNITO_CLIENT_ID?.split(",") ?? null,
-                groups: process.env.JWT_COGNITO_GROUP?.split(",") ?? null
-            }),
+        customJwtCheck({payload}: { payload: JwtPayload }) {
+            return validateCognitoJwtFields(
+                payload,
+                {
+                    tokenUse: validateTokenUse(process.env.JWT_COGNITO_TOKEN_USE) ?? null,
+                    clientId: process.env.JWT_COGNITO_CLIENT_ID?.split(",") ?? null,
+                    groups: process.env.JWT_COGNITO_GROUP?.split(",") ?? null
+                });
+        },
     },
 ])
 

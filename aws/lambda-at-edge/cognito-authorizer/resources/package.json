@@ -1,18 +1,17 @@
 {
-  "name": "cognito-auth",
+  "name": "lambda-cognito-authorizer",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "dependencies": {
     "cognito-at-edge": "^1.5.2"
   },
   "devDependencies": {
-    "@aws-sdk/client-secrets-manager": "^3.614.0",
-    "@types/aws-lambda": "^8.10.141",
-    "@types/node": "^20.14.10",
+    "@aws-sdk/client-secrets-manager": "^3.624.0",
+    "@types/aws-lambda": "^8.10.143",
+    "@types/node": "^22.1.0",
     "esbuild": "^0.23.0"
   },
   "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "esbuild index.ts --bundle --minify --platform=node --target=node20 --outdir=dist"
+    "build": "esbuild src/index.ts --bundle --minify --platform=node --target=node20 --outdir=dist"
   }
 }

@@ -1,12 +1,12 @@
 {
-  "name": "cognito-pre-sign-up-link-federated-user",
+  "name": "lambda-remove-first-part-of-path",
   "version": "1.0.0",
   "main": "src/index.ts",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.143",
     "@types/node": "^22.1.0",
-    "@aws-sdk/client-cognito-identity-provider": "^3.625.0",
     "esbuild": "^0.23.0"
   },
   "scripts": {

@@ -14,7 +14,7 @@ export class AuthorizerEventV1JwtExtractor implements JwtExtractor<APIGatewayReq
 
     extract(event: APIGatewayRequestAuthorizerEvent): string | undefined {
         if (this.sources.headerName !== undefined) {
-            const jwtFromHeader = extractJwtFromHeaders(this.sources.headerName, event.headers)
+            const jwtFromHeader = extractJwtFromHeaders(event.headers ?? {}, this.sources.headerName)
 
             if (jwtFromHeader !== undefined) {
                 console.debug(`Found JWT from header: ${this.sources.headerName}.`)
@@ -23,7 +23,7 @@ export class AuthorizerEventV1JwtExtractor implements JwtExtractor<APIGatewayReq
         }
 
         if (this.sources.cookieRegex !== undefined) {
-            const jwtFromCookie = this.extractJwtFromCookies(event)
+            const jwtFromCookie = findFirstCookieMatching((event.headers ?? {})["cookie"]?.split("; ") ?? [], this.sources.cookieRegex)
 
             if (jwtFromCookie !== undefined) {
                 console.debug(`Found JWT from cookie: ${jwtFromCookie.name}.`)
@@ -31,12 +31,9 @@ export class AuthorizerEventV1JwtExtractor implements JwtExtractor<APIGatewayReq
             }
         }
 
-        console.log(`Could not find any JWT from header ${this.sources.headerName} or cookie matching regex ${this.sources.cookieRegex.source}.`)
+        console.log(`Could not find any JWT from header ${this.sources.headerName} or cookie matching regex ${this.sources.cookieRegex?.source}.`)
         return undefined
     }
-
-    private extractJwtFromCookies = (event: APIGatewayRequestAuthorizerEvent): RequestCookie | undefined =>
-        findFirstCookieMatching(event.headers["cookie"]?.split("; ") ?? [], this.sources.cookieRegex)
 }
 
 export class AuthorizerEventV2JwtExtractor implements JwtExtractor<APIGatewayRequestAuthorizerEventV2> {
@@ -46,7 +43,7 @@ export class AuthorizerEventV2JwtExtractor implements JwtExtractor<APIGatewayReq
 
     extract(event: APIGatewayRequestAuthorizerEventV2): string | undefined {
         if (this.sources.headerName !== undefined) {
-            const jwtFromHeader = extractJwtFromHeaders(this.sources.headerName.toLowerCase(), event.headers)
+            const jwtFromHeader = extractJwtFromHeaders(event.headers ?? {}, this.sources.headerName.toLowerCase())
 
             if (jwtFromHeader !== undefined) {
                 console.debug(`Found JWT from header: ${this.sources.headerName}.`)
@@ -55,7 +52,7 @@ export class AuthorizerEventV2JwtExtractor implements JwtExtractor<APIGatewayReq
         }
 
         if (this.sources.cookieRegex !== undefined) {
-            const jwtFromCookie = this.extractJwtFromCookies(event)
+            const jwtFromCookie = findFirstCookieMatching(event.cookies ?? [], this.sources.cookieRegex)
 
             if (jwtFromCookie !== undefined) {
                 console.debug(`Found JWT from cookie: ${jwtFromCookie.name}.`)
@@ -63,15 +60,12 @@ export class AuthorizerEventV2JwtExtractor implements JwtExtractor<APIGatewayReq
             }
         }
 
-        console.log(`Could not find any JWT from header ${this.sources.headerName} or cookie matching regex ${this.sources.cookieRegex.source}.`)
+        console.log(`Could not find any JWT from header ${this.sources.headerName} or cookie matching regex ${this.sources.cookieRegex?.source}.`)
         return undefined
     }
-
-    private extractJwtFromCookies = (event: APIGatewayRequestAuthorizerEventV2): RequestCookie | undefined =>
-        findFirstCookieMatching(event.cookies ?? [], this.sources.cookieRegex)
 }
 
-const extractJwtFromHeaders = (jwtHeaderName: string, headers: APIGatewayRequestAuthorizerEventHeaders): string | undefined =>
+const extractJwtFromHeaders = (headers: APIGatewayRequestAuthorizerEventHeaders, jwtHeaderName: string): string | undefined =>
     headers[jwtHeaderName]?.replace("Bearer ", "")
 
 const findFirstCookieMatching = (cookies: string[], cookieRegex: RegExp): RequestCookie | undefined =>

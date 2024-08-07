@@ -53,7 +53,7 @@ export class ApiGatewayV1JwtAuthorizer extends JwtAuthorizer<APIGatewayRequestAu
     enricher = this.jwtEnricher
 
     result = (event: APIGatewayRequestAuthorizerEvent, verifiedJwt: JwtPayload, attributes?: UserAttributes): APIGatewayAuthorizerWithContextResult<AuthContextV1> => ({
-        principalId: verifiedJwt.sub,
+        principalId: verifiedJwt.sub!!,
         policyDocument: {
             Version: "2012-10-17",
             Statement: [

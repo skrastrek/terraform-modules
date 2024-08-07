@@ -4,10 +4,19 @@ locals {
   resources_path = "${path.module}/resources"
 }
 
+data "external" "npm_build" {
+  program = [
+    "bash", "-c", <<EOT
+(npm ci && npm run build) >&2 && echo "{\"filename\": \"index.js\"}"
+EOT
+  ]
+  working_dir = local.resources_path
+}
+
 data "archive_file" "zip" {
   type        = "zip"
-  source_file = "${local.resources_path}/index.js"
-  output_path = "${local.resources_path}/lambda.zip"
+  source_file = "${local.resources_path}/dist/${data.external.npm_build.result.filename}"
+  output_path = "${local.resources_path}/dist/lambda.zip"
 }
 
 resource "aws_lambda_function" "this" {

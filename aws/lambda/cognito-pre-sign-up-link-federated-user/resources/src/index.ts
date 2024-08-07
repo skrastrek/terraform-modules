@@ -39,7 +39,7 @@ export const handler: PreSignUpTriggerHandler = async event => {
         if (existingUser) {
             // user already has cognito account
             const sourceUserId = providerUserId;
-            const destinationUserId = existingUser.Username;
+            const destinationUserId = existingUser.Username!!;
             await linkAccounts(
                 sourceUserId,
                 destinationUserId,
