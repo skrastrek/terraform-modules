@@ -2,21 +2,21 @@ data "aws_region" "current" {}
 
 locals {
   config = {
-    type        = "metric"
+    type = "metric"
 
-    width       = var.width
-    height      = var.height
+    width  = var.width
+    height = var.height
 
-    x           = var.position_x
-    y           = var.position_y
+    x = var.position_x
+    y = var.position_y
 
-    properties  = {
-      title     = var.title
-      region    = data.aws_region.current.id
-      period    = var.period
-      view      = "timeSeries"
-      stacked   = false
-      liveData  = var.display_live_data
+    properties = {
+      title    = var.title
+      region   = data.aws_region.current.id
+      period   = var.period
+      view     = "timeSeries"
+      stacked  = false
+      liveData = var.display_live_data
 
       metrics = [
         [

@@ -2,30 +2,30 @@ data "aws_region" "current" {}
 
 locals {
   config = {
-    type        = "metric"
+    type = "metric"
 
-    width       = var.width
-    height      = var.height
+    width  = var.width
+    height = var.height
 
-    x           = var.position_x
-    y           = var.position_y
+    x = var.position_x
+    y = var.position_y
 
-    properties  = {
-      title     = var.title
-      region    = data.aws_region.current.id
-      period    = var.period
-      view      = "timeSeries"
-      stacked   = true
-      liveData  = var.display_live_data
+    properties = {
+      title    = var.title
+      region   = data.aws_region.current.id
+      period   = var.period
+      view     = "timeSeries"
+      stacked  = true
+      liveData = var.display_live_data
 
-      yAxis     = {
+      yAxis = {
         left = {
           label     = "Count",
           showUnits = false
         }
       }
 
-      metrics   = [
+      metrics = [
         [
           "AWS/ApiGateway",
           "5xx",
@@ -56,9 +56,9 @@ locals {
         ],
         [
           {
-            label       = "2xx"
-            color       = var.label_color_2xx
-            expression  = "requests - (server_errors + client_errors)"
+            label      = "2xx"
+            color      = var.label_color_2xx
+            expression = "requests - (server_errors + client_errors)"
           }
         ],
         [

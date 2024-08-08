@@ -1,17 +1,17 @@
 variable "api_gateway_name" {
-  type        = string
+  type = string
 }
 
 variable "api_gateway_stage" {
-  type        = string
+  type = string
 }
 
 variable "title" {
-  type        = string
+  type = string
 }
 
 variable "period" {
-  type        = number
+  type = number
 }
 
 variable "display_live_data" {
@@ -21,34 +21,32 @@ variable "display_live_data" {
 }
 
 variable "width" {
-  type        = number
-  default     = 12
+  type = number
 }
 
 variable "height" {
-  type        = number
-  default     = 6
+  type = number
 }
 
 variable "position_x" {
-  type        = number
+  type = number
 }
 
 variable "position_y" {
-  type        = number
+  type = number
 }
 
 variable "label_color_p10" {
-  type        = string
-  default     = "#d62728"
+  type    = string
+  default = "#d62728"
 }
 
 variable "label_color_p50" {
-  type        = string
-  default     = "#ff7f0e"
+  type    = string
+  default = "#ff7f0e"
 }
 
 variable "label_color_p90" {
-  type        = string
-  default     = "#1f77b4"
+  type    = string
+  default = "#1f77b4"
 }
