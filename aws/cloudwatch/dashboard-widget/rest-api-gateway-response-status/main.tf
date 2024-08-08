@@ -28,7 +28,7 @@ locals {
       metrics = [
         [
           "AWS/ApiGateway",
-          "5xx",
+          "5XXError",
           "Stage",
           var.api_gateway_stage,
           "ApiName",
@@ -42,7 +42,7 @@ locals {
         ],
         [
           "AWS/ApiGateway",
-          "4xx",
+          "4XXError",
           "Stage",
           var.api_gateway_stage,
           "ApiName",
