@@ -53,7 +53,7 @@ export class AuthorizerEventV1HeaderJwtExtractor implements JwtExtractor<APIGate
             return jwtFromHeader
         }
 
-        console.log(`Could not find JWT from header: ${this.headerName}.`)
+        console.debug(`Could not find JWT from header: ${this.headerName}.`)
         return undefined
     }
 }
@@ -72,7 +72,7 @@ export class AuthorizerEventV1CookieJwtExtractor implements JwtExtractor<APIGate
             return jwtFromCookie.value
         }
 
-        console.log(`Could not find JWT from cookie: ${this.cookieRegex.source}`)
+        console.debug(`Could not find JWT from cookie: ${this.cookieRegex.source}`)
         return undefined
     }
 }
@@ -91,7 +91,7 @@ export class AuthorizerEventV2HeaderJwtExtractor implements JwtExtractor<APIGate
             return jwtFromHeader
         }
 
-        console.log(`Could not find JWT from header: ${this.headerName}.`)
+        console.debug(`Could not find JWT from header: ${this.headerName}.`)
         return undefined
     }
 }
@@ -110,7 +110,7 @@ export class AuthorizerEventV2CookieJwtExtractor implements JwtExtractor<APIGate
             return jwtFromCookie.value
         }
 
-        console.log(`Could not find JWT from cookie: ${this.cookieRegex.source}`)
+        console.debug(`Could not find JWT from cookie: ${this.cookieRegex.source}`)
         return undefined
     }
 }

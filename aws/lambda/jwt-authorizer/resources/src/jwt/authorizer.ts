@@ -26,6 +26,7 @@ export abstract class JwtAuthorizer<E, R, Attributes> {
         const jwt = this.extractor.extract(event)
 
         if (jwt === undefined) {
+            console.warn("Could not find any JWT.")
             throw new Error("Unauthorized")
         }
 
