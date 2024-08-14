@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "dependencies": {
-    "cognito-at-edge": "^1.5.2"
+    "cognito-at-edge": "^1.5.3"
   },
   "devDependencies": {
     "@aws-sdk/client-secrets-manager": "^3.629.0",
