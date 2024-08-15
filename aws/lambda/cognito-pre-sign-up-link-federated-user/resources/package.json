@@ -5,8 +5,8 @@
   "dependencies": {},
   "devDependencies": {
     "@types/aws-lambda": "^8.10.143",
-    "@types/node": "^22.2.0",
-    "@aws-sdk/client-cognito-identity-provider": "^3.629.0",
+    "@types/node": "^22.3.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.631.0",
     "esbuild": "^0.23.0"
   },
   "scripts": {
