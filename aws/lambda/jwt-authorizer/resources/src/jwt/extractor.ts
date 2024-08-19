@@ -2,6 +2,10 @@ import {APIGatewayRequestAuthorizerEvent, APIGatewayRequestAuthorizerEventV2} fr
 import {APIGatewayRequestAuthorizerEventHeaders} from "aws-lambda/trigger/api-gateway-authorizer"
 import {RequestCookie} from "../types";
 
+type AnyObject<T> = { [key: string]: T | undefined };
+
+const COOKIE_HEADER: string = "cookie"
+
 export interface JwtExtractor<E> {
     extract(event: E): string | undefined
 }
@@ -65,7 +69,8 @@ export class AuthorizerEventV1CookieJwtExtractor implements JwtExtractor<APIGate
 
     extract(event: APIGatewayRequestAuthorizerEvent): string | undefined {
 
-        const jwtFromCookie = findFirstCookieMatching((event.headers ?? {})["cookie"]?.split("; ") ?? [], this.cookieRegex)
+        const cookies: string[] = findValueIgnoreCase(event.headers ?? {}, COOKIE_HEADER)?.split("; ") ?? []
+        const jwtFromCookie = findFirstCookieMatching(cookies, this.cookieRegex)
 
         if (jwtFromCookie !== undefined) {
             console.debug(`Found JWT from cookie: ${this.cookieRegex.source}.`)
@@ -84,7 +89,7 @@ export class AuthorizerEventV2HeaderJwtExtractor implements JwtExtractor<APIGate
 
     extract(event: APIGatewayRequestAuthorizerEventV2): string | undefined {
 
-        const jwtFromHeader = extractJwtFromHeaders(event.headers ?? {}, this.headerName.toLowerCase())
+        const jwtFromHeader = extractJwtFromHeaders(event.headers ?? {}, this.headerName)
 
         if (jwtFromHeader !== undefined) {
             console.debug(`Found JWT from header: ${this.headerName}.`)
@@ -116,7 +121,7 @@ export class AuthorizerEventV2CookieJwtExtractor implements JwtExtractor<APIGate
 }
 
 const extractJwtFromHeaders = (headers: APIGatewayRequestAuthorizerEventHeaders, jwtHeaderName: string): string | undefined =>
-    headers[jwtHeaderName]?.replace("Bearer ", "")
+    findValueIgnoreCase(headers, jwtHeaderName)?.replace("Bearer ", "")
 
 const findFirstCookieMatching = (cookies: string[], cookieRegex: RegExp): RequestCookie | undefined =>
     cookies
@@ -128,3 +133,12 @@ const findFirstCookieMatching = (cookies: string[], cookieRegex: RegExp): Reques
             }
         })
         .find(cookie => cookieRegex.test(cookie.name))
+
+const findValueIgnoreCase = <T>(object: AnyObject<T>, key: string): T | undefined => {
+    const keyIgnoreCase = findKeyIgnoreCase(object, key)
+
+    return keyIgnoreCase !== undefined ? object[keyIgnoreCase] : undefined;
+};
+
+const findKeyIgnoreCase = (object: any, key: string): string | undefined =>
+    Object.keys(object).find(k => k.toLowerCase() === key.toLowerCase());
