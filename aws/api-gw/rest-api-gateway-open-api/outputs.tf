@@ -7,7 +7,9 @@ output "arn" {
 }
 
 output "base_url" {
-  value = "https://${aws_apigatewayv2_api_mapping.this.domain_name}/${aws_apigatewayv2_api_mapping.this.api_mapping_key}"
+  value = var.custom_domain_name != null ?
+    "https://${aws_apigatewayv2_api_mapping.this[0].domain_name}/${aws_apigatewayv2_api_mapping.this[0].api_mapping_key}" :
+    aws_api_gateway_stage.this.invoke_url
 }
 
 output "name" {
