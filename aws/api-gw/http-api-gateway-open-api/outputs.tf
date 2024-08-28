@@ -6,6 +6,10 @@ output "arn" {
   value = aws_apigatewayv2_api.this.arn
 }
 
+output "base_url" {
+  value = "https://${aws_apigatewayv2_api_mapping.this.domain_name}/${aws_apigatewayv2_api_mapping.this.api_mapping_key}"
+}
+
 output "name" {
   value = aws_apigatewayv2_api.this.name
 }
