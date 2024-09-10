@@ -1,6 +1,10 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/*"
+    directories:
+      - "/aws/lambda/cognito-pre-sign-up-link-federated-user"
+      - "/aws/lambda/jwt-authorizer"
+      - "/aws/lambda-at-edge/cognito-authorizer"
+      - "/aws/lambda-at-edge/remove-first-part-of-path"
     schedule:
       interval: "weekly"
