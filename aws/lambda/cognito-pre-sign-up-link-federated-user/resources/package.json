@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "dependencies": {},
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.143",
+    "@types/aws-lambda": "^8.10.145",
     "@types/node": "^22.5.5",
     "@aws-sdk/client-cognito-identity-provider": "^3.631.0",
     "esbuild": "^0.24.0"
