@@ -6,7 +6,7 @@
     "aws-jwt-verify": "^4.0.1"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.143",
+    "@types/aws-lambda": "^8.10.145",
     "@types/node": "^22.3.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.631.0",
     "esbuild": "^0.23.0"
