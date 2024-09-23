@@ -2,10 +2,10 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directories:
-      - "/aws/lambda/cognito-pre-sign-up-link-federated-user"
-      - "/aws/lambda/image-processor"
-      - "/aws/lambda/jwt-authorizer"
-      - "/aws/lambda-at-edge/cognito-authorizer"
-      - "/aws/lambda-at-edge/remove-first-part-of-path"
+      - "/aws/lambda/cognito-pre-sign-up-link-federated-user/resources"
+      - "/aws/lambda/image-processor/resources"
+      - "/aws/lambda/jwt-authorizer/resources"
+      - "/aws/lambda-at-edge/cognito-authorizer/resources"
+      - "/aws/lambda-at-edge/remove-first-part-of-path/resources"
     schedule:
       interval: "weekly"
