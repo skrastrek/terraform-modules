@@ -8,4 +8,4 @@ updates:
       - "/aws/lambda-at-edge/cognito-authorizer/resources"
       - "/aws/lambda-at-edge/remove-first-part-of-path/resources"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
