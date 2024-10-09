@@ -7,7 +7,7 @@ locals {
 data "external" "npm_build" {
   program = [
     "bash", "-c", <<EOT
-npm ci && npm run build
+npm ci && npm run build && echo "{\"build_directory\": \"dist\"}"
 EOT
   ]
   working_dir = local.resources_path
@@ -16,7 +16,7 @@ EOT
 data "external" "copy_sharp_lib" {
   program = [
     "bash", "-c", <<EOT
-cp -r node_modules/sharp dist
+cp -r node_modules/sharp ${data.external.npm_build.result.build_directory} && echo "{}"
 EOT
   ]
   working_dir = local.resources_path
@@ -26,11 +26,10 @@ EOT
 
 data "archive_file" "zip" {
   type        = "zip"
-  source_dir  = "${local.resources_path}/dist"
+  source_dir  = "${local.resources_path}/${data.external.npm_build.result.build_directory}"
   output_path = "${local.resources_path}/dist/lambda.zip"
 
   depends_on = [
-    data.external.npm_build,
     data.external.copy_sharp_lib
   ]
 }
