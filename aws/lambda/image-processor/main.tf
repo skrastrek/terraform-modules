@@ -7,7 +7,7 @@ locals {
 data "external" "npm_build" {
   program = [
     "bash", "-c", <<EOT
-npm ci && npm run build && echo "{\"build_directory\": \"dist\"}"
+(npm ci && npm run build) >&2 && echo "{\"build_directory\": \"dist\"}"
 EOT
   ]
   working_dir = local.resources_path
@@ -16,7 +16,7 @@ EOT
 data "external" "copy_sharp_lib" {
   program = [
     "bash", "-c", <<EOT
-cp -r node_modules/sharp ${data.external.npm_build.result.build_directory} && echo "{}"
+(cp -r node_modules/sharp ${data.external.npm_build.result.build_directory}) >&2 && echo "{}"
 EOT
   ]
   working_dir = local.resources_path
