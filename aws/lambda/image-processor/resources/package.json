@@ -13,6 +13,6 @@
     "esbuild": "^0.24.0"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --minify --platform=node --target=node20 --external:sharp --outdir=dist && mkdir dist/node_modules && cp -r node_modules/sharp dist/node_modules/sharp"
+    "build": "esbuild src/index.ts --bundle --minify --platform=node --target=node20 --external:sharp --outdir=dist && mkdir -p dist/node_modules && cp -r node_modules/sharp dist/node_modules && cp -r node_modules/@img dist/node_modules"
   }
 }
