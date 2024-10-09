@@ -16,7 +16,7 @@ EOT
 data "archive_file" "zip" {
   type        = "zip"
   source_dir  = "${local.resources_path}/${data.external.npm_build.result.build_directory}"
-  output_path = "${local.resources_path}/tmp/lambda.zip"
+  output_path = "${local.resources_path}/lambda.zip"
 }
 
 resource "aws_lambda_function" "this" {
