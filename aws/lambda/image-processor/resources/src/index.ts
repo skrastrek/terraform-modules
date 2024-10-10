@@ -37,6 +37,7 @@ export const handler: S3ObjectEventHandler = async event => {
 
     try {
         originalImageResponse = await axios.get(event.getObjectContext.inputS3Url, {responseType: 'arraybuffer'})
+        console.debug(JSON.stringify(originalImageResponse))
     } catch (error) {
         console.warn(JSON.stringify(error.toJSON()))
         if (error.response?.status === 403 || error.response?.status === 404) {
