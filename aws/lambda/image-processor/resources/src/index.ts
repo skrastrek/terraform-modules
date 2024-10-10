@@ -37,7 +37,6 @@ export const handler: S3ObjectEventHandler = async event => {
 
     try {
         originalImageResponse = await axios.get(event.getObjectContext.inputS3Url, {responseType: 'arraybuffer'})
-        console.debug(originalImageResponse)
     } catch (error) {
         console.warn(error)
         if (error.response?.status === 403 || error.response?.status === 404) {
@@ -61,7 +60,7 @@ export const handler: S3ObjectEventHandler = async event => {
     }
 
     const originalImage: Sharp = sharp(originalImageResponse.data as Buffer)
-    const originalImageContentType = originalImageResponse.headers["Content-Type"]!!.toString()
+    const originalImageContentType = originalImageResponse.headers["content-type"]!!.toString()
     const originalImageMetadata = await originalImage.metadata()
 
     const processedImage = await originalImage
